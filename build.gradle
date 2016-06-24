@@ -1,35 +1,37 @@
 buildscript {
-    repositories {
-        jcenter()
-        maven { url "http://repo.spring.io/snapshot" }
-        maven { url "http://repo.spring.io/milestone" }
+repositories {
+                mavenCentral()
+
     }
+
     dependencies {
-        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.4.0.BUILD-SNAPSHOT")
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.3.5.RELEASE")
     }
 }
 
-apply plugin: 'eclipse'
-apply plugin: 'java'
-apply plugin: 'spring-boot'
 
-jar {
-    baseName = 'PF WorkFlowRS'
-    version =  '0.0.1-SNAPSHOT'
-}
+apply plugin: 'spring-boot'
+apply plugin: 'java'
+apply plugin: 'maven'
+
+group = 'de.pubflow'
+version = '0.0.1-SNAPSHOT'
+
+description = """workflowMicroService"""
 
 repositories {
-    jcenter()
-    mavenCentral()
-    maven { url "http://repo.spring.io/snapshot" }
-    maven { url "http://repo.spring.io/milestone" }
+                jcenter()
+     maven { url "https://repository.jboss.org/nexus/content/groups/public/" }
+     maven { url "http://repo.maven.apache.org/maven2" }
 }
-
 dependencies {
-	compile("org.springframework.boot:spring-boot-devtools")
+    compile group: 'org.jbpm', name: 'jbpm-bpmn2', version:'5.4.0.Final'
+    compile(group: 'org.springframework.boot', name: 'spring-boot-starter', version:'1.3.5.RELEASE') {
+exclude(module: 'commons-logging')
+    }    
     compile("org.springframework.boot:spring-boot-starter-web")
-    testCompile("org.springframework.boot:spring-boot-starter-test")
-    
-    compile group: 'org.jbpm', name: 'jbpm-bpmn2', version: '5.4.0.Final'
-
+    compile("org.springframework.boot:spring-boot-starter")
+    compile("org.springframework:spring-web")
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version:'2.6.6'
+    testCompile group: 'junit', name: 'junit', version:'3.8.1'
 }

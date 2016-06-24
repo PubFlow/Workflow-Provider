@@ -10,7 +10,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import de.pfWorkflowWS.workflow.common.WFParameterList;
 
 /**
- * @author mad
+ * @author Marc Adolf
  *
  */
 @JsonIgnoreProperties(ignoreUnknown = true)

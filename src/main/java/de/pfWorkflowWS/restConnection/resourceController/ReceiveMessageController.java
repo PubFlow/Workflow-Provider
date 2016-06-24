@@ -3,8 +3,6 @@
  */
 package de.pfWorkflowWS.restConnection.resourceController;
 
-import java.util.UUID;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -12,8 +10,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import de.pfWorkflowWS.exceptions.MessageNotValidException;
 import de.pfWorkflowWS.restConnection.restMessages.ReceiveMessage;
-
+import de.pfWorkflowWS.workflow.management.WorkflowManager;
 
 /**
  * @author mad
@@ -21,23 +20,21 @@ import de.pfWorkflowWS.restConnection.restMessages.ReceiveMessage;
  */
 @RestController
 public class ReceiveMessageController {
-	
-	@RequestMapping(value ="/executeNewWF", method=RequestMethod.POST)
-	public ResponseEntity<String> receiveNewWorkflow(@RequestBody ReceiveMessage msg){
-		if(msg.getId() == null){
-			System.out.println("id is null");
-			msg.setId(UUID.randomUUID());
+
+	@RequestMapping(value = "/executeNewWF", method = RequestMethod.POST)
+	public ResponseEntity<String> receiveNewWorkflow(@RequestBody ReceiveMessage msg) {
+
+		try {
+			//register and start the new workflow
+			WorkflowManager.getInstance().addWorkflowEntity(msg);
+		} catch (MessageNotValidException e) {
+			return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
 		}
-		
-		
-		//TODO implement handling of wrong wf messages, --> mb as error in the broker (callback with errormsg)  
-//		if(!msg.isValid()){
-//			myLogger.error("Workflow NOT deployed >> Msg is not valid ");
-//			return;
-//		}	
-		
-	System.out.println(msg);
-		return new ResponseEntity<String>("angekommen",HttpStatus.OK);
+
+		// TODO implement error handling of workflow errors  
+
+
+		return new ResponseEntity<String>("received", HttpStatus.ACCEPTED);
 	}
 
 }
