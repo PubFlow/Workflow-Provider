@@ -1,3 +1,18 @@
+/**
+ * Copyright (C) 2016 Marc Adolf, Arnd Plumhoff
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.pfWorkflowWS.workflow.engines;
 
 import java.util.ArrayList;
@@ -18,7 +33,6 @@ import org.drools.runtime.StatefulKnowledgeSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.pfWorkflowWS.exceptions.WFException;
 import de.pfWorkflowWS.exceptions.WFOperationNotSupported;
 import de.pfWorkflowWS.workflow.common.ParameterType;
 import de.pfWorkflowWS.workflow.common.WFParameter;
@@ -83,17 +97,17 @@ public class JBPMEngine extends WorkflowEngine {
 	}
 
 	@Override
-	public void deployWF(PubFlow wf) throws WFException {
+	public void deployWF(PubFlow wf){
 		myWF = (JBPMPubflow) wf;
 	}
 
 	@Override
-	public void undeployWF(long wfID) throws WFException {
+	public void undeployWF(long wfID) {
 		throw new WFOperationNotSupported();
 	}
 
 	@Override
-	public void stopWF(long wfID) throws WFException {
+	public void stopWF(long wfID) {
 		throw new WFOperationNotSupported();
 	}
 
@@ -106,7 +120,7 @@ public class JBPMEngine extends WorkflowEngine {
 	 * @return (KnowledgeBase) : the KnowledgeBase
 	 * @throws Exception
 	 */
-	private void createKnowledgeBase(JBPMPubflow wf) throws Exception {
+	private void createKnowledgeBase(JBPMPubflow wf){
 		myLogger.info("Trying to add WF to knowledgebase");
 		KnowledgeBuilder kbuilder = null;
 		try {
@@ -134,7 +148,7 @@ public class JBPMEngine extends WorkflowEngine {
 	 * @return (ProcessInstance) : the instance of the running workflow
 	 * @throws Exception
 	 */
-	private void runWF() throws Exception {
+	private void runWF() {
 		myLogger.info("Trying to start workflow: " + myWF.getWFID());
 		WFParameterList params = parameter;
 //		ProcessInstance instance = null;
@@ -220,7 +234,7 @@ public class JBPMEngine extends WorkflowEngine {
 	}
 
 	@Override
-	public void setParams(WFParameterList params) throws WFException {
+	public void setParams(WFParameterList params){
 		parameter = params;
 
 	}

@@ -13,9 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.pfWorkflowWS.workflow.entity;
+package de.pfWorkflowWS.exceptions;
 
+/**
+ * @author Marc Adolf
+ *
+ */
+public class EngineNotInitializedException extends WFException {
 
-public class JBPMPubflow extends  PubFlow{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -9147757823906665044L;
+
+	public EngineNotInitializedException(String string) {
+		super(string);
+	}
 
 }

@@ -1,8 +1,21 @@
 /**
- * 
+ * Copyright (C) 2016 Marc Adolf, Arnd Plumhoff
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package de.pfWorkflowWS.restConnection.restMessages;
 
+import java.net.URI;
 import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -10,16 +23,36 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import de.pfWorkflowWS.workflow.common.WFParameterList;
 
 /**
+ * Represents the message which is given to the server to initialise a new
+ * workflow. The {@link #id} is used to map responses and events.
+ * 
+ * 
  * @author Marc Adolf
  *
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ReceiveMessage {
 
+	/**
+	 * Used to map the workflow to other services, events and responses.
+	 */
 	private UUID id;
+	/**
+	 * The workflow to be executed, as byte array-
+	 */
 	private byte[] wf;
+	/**
+	 * The type of the workflow (e.g. BPMN2)
+	 */
 	private String type;
+	/**
+	 * Parameters used to execute the workflow.
+	 */
 	private WFParameterList workflowParameters;
+	/**
+	 * Url to response to
+	 */
+	private URI callbackAdress;
 
 	public ReceiveMessage() {
 	}
@@ -64,5 +97,23 @@ public class ReceiveMessage {
 
 	public String toString() {
 		return "WF message: id: " + id + " wf: " + wf;
+	}
+
+	public URI getCallbackAdress() {
+		return callbackAdress;
+	}
+
+	public void setCallbackAdress(URI callbackAdress) {
+		this.callbackAdress = callbackAdress;
+	}
+
+	/**
+	 * Checks if the message is valid. This contains only if all necessary
+	 * fields are not null.
+	 * 
+	 * @return true, if id, type, workflow and callbackAdress are not null
+	 */
+	public Boolean isValid() {
+		return id != null && wf != null && type == null && callbackAdress != null;
 	}
 }

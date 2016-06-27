@@ -13,9 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.pfWorkflowWS.workflow.entity;
 
+package de.pfWorkflowWS.exceptions;
 
-public class JBPMPubflow extends  PubFlow{
+/**
+ * @author Marc Adolf
+ *
+ */
+public class WFExecutionFailedException extends WFException {
+
+	public WFExecutionFailedException(String string) {
+		super(string);
+	}
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
 }
