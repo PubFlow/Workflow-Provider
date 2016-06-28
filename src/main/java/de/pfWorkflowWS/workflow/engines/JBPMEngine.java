@@ -41,6 +41,11 @@ import de.pfWorkflowWS.workflow.common.WFType;
 import de.pfWorkflowWS.workflow.entity.JBPMPubflow;
 import de.pfWorkflowWS.workflow.entity.PubFlow;
 
+/**
+ * 
+ * @author Peer Brauer
+ *
+ */
 public class JBPMEngine extends WorkflowEngine {
 
 	private JBPMPubflow myWF;
@@ -131,7 +136,6 @@ public class JBPMEngine extends WorkflowEngine {
 
 		catch (Exception e) {
 			myLogger.error("Couldn't create knowledgebase");
-			e.printStackTrace();
 		}
 		kbase = kbuilder.newKnowledgeBase();
 	}
@@ -228,8 +232,9 @@ public class JBPMEngine extends WorkflowEngine {
 			runWF();
 			myLogger.info("Success!");
 		} catch (Exception e) {
+			System.out.println("hi");
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+//			e.printStackTrace();
 		}
 	}
 

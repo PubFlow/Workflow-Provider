@@ -19,7 +19,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
- * This is the main class of the Workflow Microservice of PubFlow.
+ * This is the main class of the workflow microservice of PubFlow.
  * Spring Boot is used to handle the Rest-services and the web server.
  * 
  * @author Marc Adolf
@@ -29,9 +29,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class RestConnector {
 
     public static void main(String[] args) throws Exception {
-    	//TODO init "list/map" of managed workflows
-    	//TODO load saved workflows to enable restart of the application
-    	
+    	//TODO map incoming events to workflow entities and trigger them
         SpringApplication.run(RestConnector.class, args);
     }
     

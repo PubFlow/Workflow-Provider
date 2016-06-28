@@ -17,6 +17,11 @@ package de.pfWorkflowWS.workflow.entity;
 
 import de.pfWorkflowWS.workflow.common.WFType;
 
+/**
+ * 
+ * @author Peer Brauer
+ *
+ */
 public class PubFlow {
 
 	private String WFID;

@@ -18,6 +18,7 @@ package de.pfWorkflowWS.workflow.management;
 import java.util.HashMap;
 import java.util.UUID;
 
+import de.pfWorkflowWS.exceptions.DuplicateIDException;
 import de.pfWorkflowWS.exceptions.EngineNotInitializedException;
 import de.pfWorkflowWS.exceptions.WFException;
 import de.pfWorkflowWS.exceptions.WFExecutionFailedException;
@@ -56,7 +57,9 @@ public class WorkflowManager {
 	/**
 	 * Adds a new workflow to the list of currently managed tasks. The
 	 * {@link WorkflowEntity} will be created and a {@link UUID} will be
-	 * returned. Designed to control the access of this list in this control
+	 * returned.
+	 * Workflows with id's that already exist are rejected. 
+	 * Designed to control the access of this list in this control
 	 * class.
 	 * 
 	 * @param newRecMsg
@@ -64,11 +67,16 @@ public class WorkflowManager {
 	 *            new {@link WorkflowEntity}.
 	 * @return the {@link UUID} which maps to the created
 	 *         {@link WorkflowEntity}.
+	 * @throws DuplicateIDException 
 	 */
-	synchronized public void addWorkflowEntity(ReceiveMessage newRecMsg) {
+	synchronized public void addWorkflowEntity(ReceiveMessage newRecMsg) throws DuplicateIDException {
 
 		UUID msgId = newRecMsg.getId();
 
+		if(lookupWorkflowEntryId(msgId) != null){
+			throw new DuplicateIDException("Workflow with ID already exists");
+		}
+		
 		registeredWorkflows.put(msgId, new WorkflowEntity(newRecMsg));
 	}
 
@@ -126,9 +134,10 @@ public class WorkflowManager {
 		WFBroker wfBroker = WFBroker.getInstance();
 		currentWorkflow.setState(ExecutionState.initialized);
 		WorkflowEngine engine = wfBroker.initWfEngine(currentWorkflow.getInitMsg());
+		currentWorkflow.setEngine(engine);
 		currentWorkflow.setState(ExecutionState.started);
 		try {
-			wfBroker.executeWfEngine(engine, msgId);
+			wfBroker.executeWfEngine(currentWorkflow);
 		} catch (WFExecutionFailedException e) {
 			currentWorkflow.setState(ExecutionState.error);
 			throw e;

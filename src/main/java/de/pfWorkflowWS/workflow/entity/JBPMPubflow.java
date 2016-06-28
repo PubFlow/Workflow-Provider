@@ -16,6 +16,10 @@
 package de.pfWorkflowWS.workflow.entity;
 
 
+/**
+ * 
+ * @author Peer Brauer
+ */
 public class JBPMPubflow extends  PubFlow{
 
 }

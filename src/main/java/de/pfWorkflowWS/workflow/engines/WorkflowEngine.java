@@ -22,7 +22,11 @@ import de.pfWorkflowWS.workflow.common.WFType;
 import de.pfWorkflowWS.workflow.entity.PubFlow;
 
 
-
+/**
+ * 
+ * @author Peer Brauer
+ *
+ */
 abstract public class WorkflowEngine implements Runnable{
 	
 	

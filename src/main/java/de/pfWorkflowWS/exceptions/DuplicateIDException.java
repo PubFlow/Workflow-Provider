@@ -13,26 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.pfWorkflowWS.restConnection.resourceController;
-
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import de.pfWorkflowWS.restConnection.restMessages.ResponseMessage;
-
+package de.pfWorkflowWS.exceptions;
 
 /**
- * .....
- * 
  * @author Marc Adolf
  *
  */
-@RestController
-public class ResponseMessageController {
+public class DuplicateIDException extends WFException {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	
-	@RequestMapping("/response")
-	public ResponseMessage receive(){
-		return new ResponseMessage();
+	public DuplicateIDException(String string) {
+		super(string);
 	}
 
 }

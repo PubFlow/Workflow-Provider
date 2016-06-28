@@ -19,6 +19,7 @@ import java.util.UUID;
 
 import org.springframework.web.client.RestTemplate;
 
+import de.pfWorkflowWS.exceptions.DuplicateIDException;
 import de.pfWorkflowWS.exceptions.WFException;
 import de.pfWorkflowWS.restConnection.restMessages.ReceiveMessage;
 import de.pfWorkflowWS.restConnection.restMessages.ResponseMessage;
@@ -39,17 +40,18 @@ public class WorkflowThread extends Thread {
 	@Override
 	public void run() {
 		WorkflowManager wfMan = WorkflowManager.getInstance();
-		wfMan.addWorkflowEntity(msg);
-		UUID msgId = msg.getId();
 		ResponseMessage answer = new ResponseMessage();
-		answer.setId(msgId);
 		RestTemplate restTemplate = new RestTemplate();
+		UUID msgId = msg.getId();
+
+		
 		try {
+			wfMan.addWorkflowEntity(msg);
+			answer.setId(msgId);
 			wfMan.startWorkflow(msgId);
 		} catch (WFException e) {
 			answer.setErrorMessage(e.getMessage());
-		}
-		// Better more verbose/clear result
+		} // Better more verbose/clear result
 		answer.setResult(wfMan.lookupWorkflowEntryId(msgId).getState().toString());
 		restTemplate.postForObject(msg.getCallbackAdress(), answer, String.class);
 	}

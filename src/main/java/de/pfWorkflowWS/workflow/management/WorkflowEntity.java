@@ -31,6 +31,7 @@ public class WorkflowEntity {
 	// many information are already saved in the initial message
 	private ReceiveMessage initMsg;
 	private WorkflowEngine engine;
+	private Throwable uncaughtException;
 
 	public WorkflowEntity(ReceiveMessage initMsg) {
 		this.initMsg = initMsg;
@@ -60,6 +61,14 @@ public class WorkflowEntity {
 		this.engine = engine;
 	}
 
+	synchronized public Throwable getUncaughtException() {
+		return uncaughtException;
+	}
+
+	synchronized public void setUncaughtException(Throwable uncaughtException) {
+		this.uncaughtException = uncaughtException;
+	}
+	
 	/**
 	 * Represents the current state of one workflow entity.
 	 * 

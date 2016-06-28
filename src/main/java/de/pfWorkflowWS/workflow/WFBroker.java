@@ -15,6 +15,7 @@
  */
 package de.pfWorkflowWS.workflow;
 
+import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.UUID;
 
 import org.slf4j.Logger;
@@ -29,6 +30,7 @@ import de.pfWorkflowWS.workflow.engines.JBPMEngine;
 import de.pfWorkflowWS.workflow.engines.WorkflowEngine;
 import de.pfWorkflowWS.workflow.entity.JBPMPubflow;
 import de.pfWorkflowWS.workflow.entity.PubFlow;
+import de.pfWorkflowWS.workflow.management.WorkflowEntity;
 
 /**
  * Responsible for initializing and executing the workflows. Differentiates the
@@ -124,14 +126,22 @@ public class WFBroker {
 
 	/**
 	 * Starts the given workflow engine and waits for its completion.
+	 * 
 	 * @param engine
-	 * @param id the id of the workflow, to provide information for the logging
+	 * @param id
+	 *            the id of the workflow, to provide information for the logging
 	 * @throws WFExecutionFailedException
 	 */
-	public void executeWfEngine(WorkflowEngine engine, UUID id) throws WFExecutionFailedException {
+	public void executeWfEngine(WorkflowEntity entity) throws WFExecutionFailedException {
+		Thread.UncaughtExceptionHandler exHandler = new WorkflowExceptionHandler(entity);
+		UUID id = entity.getInitMsg().getId();
+		WorkflowEngine engine = entity.getEngine();
+
 		try {
 			myLogger.info("Starting WF " + id + " ...");
 			Thread wfEngineThread = new Thread(engine);
+			// get exceptions from workflow engine
+			wfEngineThread.setUncaughtExceptionHandler(exHandler);
 			wfEngineThread.start();
 			myLogger.info("... engine " + id + " up and running");
 			wfEngineThread.join();
@@ -140,5 +150,24 @@ public class WFBroker {
 		} catch (InterruptedException e) {
 			throw new WFExecutionFailedException("Interupted while waiting for completion");
 		}
+		Throwable possibleException = entity.getUncaughtException();
+		System.out.println(possibleException);
+		if (possibleException != null) {
+			throw new WFExecutionFailedException(possibleException.getMessage());
+		}
+	}
+
+	private class WorkflowExceptionHandler implements UncaughtExceptionHandler {
+		WorkflowEntity wfEntity;
+
+		WorkflowExceptionHandler(WorkflowEntity wfEntity) {
+			this.wfEntity = wfEntity;
+		}
+
+		@Override
+		public void uncaughtException(Thread t, Throwable e) {
+			wfEntity.setUncaughtException(e);
+		}
+
 	}
 }

@@ -114,6 +114,6 @@ public class ReceiveMessage {
 	 * @return true, if id, type, workflow and callbackAdress are not null
 	 */
 	public Boolean isValid() {
-		return id != null && wf != null && type == null && callbackAdress != null;
+		return id != null && wf != null && type != null && callbackAdress != null;
 	}
 }
