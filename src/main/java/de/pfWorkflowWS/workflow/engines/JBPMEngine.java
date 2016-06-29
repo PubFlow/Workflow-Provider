@@ -17,6 +17,7 @@ package de.pfWorkflowWS.workflow.engines;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletionException;
 
 import org.drools.KnowledgeBase;
 import org.drools.builder.KnowledgeBuilder;
@@ -152,7 +153,7 @@ public class JBPMEngine extends WorkflowEngine {
 	 * @return (ProcessInstance) : the instance of the running workflow
 	 * @throws Exception
 	 */
-	private void runWF() {
+	private void runWF(){
 		myLogger.info("Trying to start workflow: " + myWF.getWFID());
 		WFParameterList params = parameter;
 //		ProcessInstance instance = null;
@@ -171,8 +172,6 @@ public class JBPMEngine extends WorkflowEngine {
 				}
 
 				ParameterType payloadClazz = wfParam.getPayloadClazz();
-
-				try {
 
 					switch (payloadClazz) {
 					case INTEGER:
@@ -198,9 +197,6 @@ public class JBPMEngine extends WorkflowEngine {
 					default:
 						break;
 					}
-				} catch (RuntimeException e) {
-					e.printStackTrace();
-				}
 			}
 
 			myLogger.info("Starting process : " + myWF.getWFID());
@@ -208,11 +204,10 @@ public class JBPMEngine extends WorkflowEngine {
 //			instance = ksession.startProcess(myWF.getWFID());
 			ksession.startProcess(myWF.getWFID());
 
-
 			myLogger.info("Workflow executed sucessfuly");
 		} catch (Exception ex) {
 			myLogger.error("Couldn't start workflow");
-			ex.printStackTrace();
+			throw new CompletionException(ex);
 		}
 		// processInstance = instance;
 	}
@@ -225,17 +220,11 @@ public class JBPMEngine extends WorkflowEngine {
 	}
 
 	@Override
-	public void run() {
-		try {
+	public void run(){
 			myLogger.info("Starting ...");
 			createKnowledgeBase((JBPMPubflow) myWF);
 			runWF();
 			myLogger.info("Success!");
-		} catch (Exception e) {
-			System.out.println("hi");
-			// TODO Auto-generated catch block
-//			e.printStackTrace();
-		}
 	}
 
 	@Override

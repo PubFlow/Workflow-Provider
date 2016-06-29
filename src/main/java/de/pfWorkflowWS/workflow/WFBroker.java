@@ -136,6 +136,7 @@ public class WFBroker {
 		Thread.UncaughtExceptionHandler exHandler = new WorkflowExceptionHandler(entity);
 		UUID id = entity.getInitMsg().getId();
 		WorkflowEngine engine = entity.getEngine();
+		Throwable possibleException;
 
 		try {
 			myLogger.info("Starting WF " + id + " ...");
@@ -145,13 +146,16 @@ public class WFBroker {
 			wfEngineThread.start();
 			myLogger.info("... engine " + id + " up and running");
 			wfEngineThread.join();
-			myLogger.info("...engine " + id + " finished ");
+			String errorString = "";
+			possibleException = entity.getUncaughtException();
+			if (possibleException != null) {
+				errorString = "with errors (" + entity.getUncaughtException().getMessage() + ")";
+			}
+			myLogger.info("...engine " + id + " finished " + errorString);
 
 		} catch (InterruptedException e) {
 			throw new WFExecutionFailedException("Interupted while waiting for completion");
 		}
-		Throwable possibleException = entity.getUncaughtException();
-		System.out.println(possibleException);
 		if (possibleException != null) {
 			throw new WFExecutionFailedException(possibleException.getMessage());
 		}

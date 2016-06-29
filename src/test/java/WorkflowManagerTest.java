@@ -49,7 +49,7 @@ public class WorkflowManagerTest {
 	}
 
 	@Test
-//	(expected=WFExecutionFailedException.class)
+	(expected=WFExecutionFailedException.class)
 	public void startWorkflowExceptionAndErrorState() throws WFException{
 		wfMan.addWorkflowEntity(recvMessage);
 		wfMan.startWorkflow(recvMessage.getId());

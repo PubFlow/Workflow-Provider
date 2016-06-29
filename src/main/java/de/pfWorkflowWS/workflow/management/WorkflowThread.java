@@ -19,7 +19,6 @@ import java.util.UUID;
 
 import org.springframework.web.client.RestTemplate;
 
-import de.pfWorkflowWS.exceptions.DuplicateIDException;
 import de.pfWorkflowWS.exceptions.WFException;
 import de.pfWorkflowWS.restConnection.restMessages.ReceiveMessage;
 import de.pfWorkflowWS.restConnection.restMessages.ResponseMessage;
