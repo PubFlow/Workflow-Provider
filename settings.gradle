@@ -3,4 +3,4 @@ include 'api'
 include 'services:webservice'
 
 
-rootProject.name = 'workflowMicroService'
+rootProject.name = 'workflowmicroservice'

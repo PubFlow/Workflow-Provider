@@ -38,7 +38,7 @@ public class ReceiveMessage {
 	 */
 	private UUID id;
 	/**
-	 * The workflow to be executed, as byte array-
+	 * The workflow to be executed, as byte array.
 	 */
 	private byte[] wf;
 	/**
@@ -55,11 +55,6 @@ public class ReceiveMessage {
 	private URI callbackAdress;
 
 	public ReceiveMessage() {
-	}
-
-	public ReceiveMessage(UUID id, byte[] wf) {
-		this.id = id;
-		this.wf = wf;
 	}
 
 	public UUID getId() {

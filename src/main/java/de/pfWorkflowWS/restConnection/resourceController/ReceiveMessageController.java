@@ -15,6 +15,10 @@
  */
 package de.pfWorkflowWS.restConnection.resourceController;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.UUID;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import de.pfWorkflowWS.restConnection.restMessages.ReceiveMessage;
+import de.pfWorkflowWS.workflow.common.WFType;
 import de.pfWorkflowWS.workflow.management.WorkflowManager;
 import de.pfWorkflowWS.workflow.management.WorkflowThread;
 
@@ -57,7 +62,16 @@ public class ReceiveMessageController {
 
 		return new ResponseEntity<String>("received", HttpStatus.ACCEPTED);
 	}
-
+	
+	@RequestMapping(value = "/getWF", method = RequestMethod.GET)
+	public ReceiveMessage getRe() throws URISyntaxException{
+	ReceiveMessage recvMessage = new ReceiveMessage();
+	recvMessage.setCallbackAdress(new URI("se.informatik.uni-kiel.de"));
+	recvMessage.setId(UUID.randomUUID());
+	recvMessage.setWf(new byte[10]);
+	recvMessage.setType(WFType.BPMN2.toString());
+	return recvMessage;
+	}
 	
 
 }
