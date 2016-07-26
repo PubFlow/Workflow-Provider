@@ -1,0 +1,8 @@
+# Java
+*.class
+
+#
+target/
+build/
+bin/
+.project/

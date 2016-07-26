@@ -1,12 +1,6 @@
 de/pfWorkflowWS/workflow/common/WFType.class
-de/pfWorkflowWS/workflow/common/WFParameter.class
 de/pfWorkflowWS/workflow/entity/JBPMPubflow.class
-de/pfWorkflowWS/restConnection/restMessages/ReceiveMessage.class
-de/pfWorkflowWS/restConnection/RestConnector.class
 de/pfWorkflowWS/workflow/engines/JBPMEngine.class
-de/pfWorkflowWS/exceptions/WFOperationNotSupported.class
-de/pfWorkflowWS/exceptions/WFException.class
-de/pfWorkflowWS/restConnection/resourceController/ResponseMessageController.class
 de/pfWorkflowWS/workflow/common/WFParameterList.class
 de/pfWorkflowWS/workflow/engines/JBPMEngine$1.class
 de/pfWorkflowWS/workflow/entity/PubFlow.class
@@ -15,3 +9,8 @@ de/pfWorkflowWS/workflow/common/ParameterType.class
 de/pfWorkflowWS/workflow/engines/WorkflowEngine.class
 de/pfWorkflowWS/workflow/WFBroker.class
 de/pfWorkflowWS/restConnection/resourceController/ReceiveMessageController.class
+de/pfWorkflowWS/workflow/common/WFParameter.class
+de/pfWorkflowWS/restConnection/restMessages/ReceiveMessage.class
+de/pfWorkflowWS/restConnection/RestConnector.class
+de/pfWorkflowWS/exceptions/WFOperationNotSupported.class
+de/pfWorkflowWS/exceptions/WFException.class

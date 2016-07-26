@@ -35,6 +35,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.pfWorkflowWS.exceptions.WFOperationNotSupported;
+import de.pfWorkflowWS.restConnection.restMessages.EventMessage;
 import de.pfWorkflowWS.workflow.common.ParameterType;
 import de.pfWorkflowWS.workflow.common.WFParameter;
 import de.pfWorkflowWS.workflow.common.WFParameterList;
@@ -51,6 +52,7 @@ public class JBPMEngine extends WorkflowEngine {
 
 	private JBPMPubflow myWF;
 	WFParameterList parameter;
+	private StatefulKnowledgeSession ksession;
 	static Logger myLogger;
 	// private ProcessInstance processInstance = null;
 	private KnowledgeBase kbase = null;
@@ -139,6 +141,8 @@ public class JBPMEngine extends WorkflowEngine {
 			myLogger.error("Couldn't create knowledgebase");
 		}
 		kbase = kbuilder.newKnowledgeBase();
+		ksession = kbase.newStatefulKnowledgeSession();
+
 	}
 
 	/**
@@ -159,7 +163,6 @@ public class JBPMEngine extends WorkflowEngine {
 //		ProcessInstance instance = null;
 		try {
 			myLogger.info("Creating Knowledgebase ...");
-			StatefulKnowledgeSession ksession = kbase.newStatefulKnowledgeSession();
 			myLogger.info("Setting process parameter");
 			for (WFParameter wfParam : params.getParameterList()) {
 
@@ -231,6 +234,11 @@ public class JBPMEngine extends WorkflowEngine {
 	public void setParams(WFParameterList params){
 		parameter = params;
 
+	}
+
+	@Override
+	public synchronized void handleEvent(EventMessage msg) {
+		ksession.signalEvent(msg.getEventType(), msg.getData());
 	}
 
 }

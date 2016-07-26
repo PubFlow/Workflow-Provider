@@ -15,6 +15,8 @@
  */
 package de.pfWorkflowWS.restConnection.resourceController;
 
+import java.util.UUID;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -22,7 +24,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import de.pfWorkflowWS.restConnection.restMessages.ReceiveMessage;
+import de.pfWorkflowWS.restConnection.restMessages.EventMessage;
+import de.pfWorkflowWS.workflow.management.WorkflowEntity;
+import de.pfWorkflowWS.workflow.management.WorkflowManager;
 
 /**
  * Accepts or rejects update requests for workflows, which may trigger events in
@@ -36,8 +40,15 @@ import de.pfWorkflowWS.restConnection.restMessages.ReceiveMessage;
 public class EventMessageController {
 
 	@RequestMapping(value = "/updateWF", method = RequestMethod.PUT)
-	public ResponseEntity<String> receiveNewWorkflow(@RequestBody ReceiveMessage msg) {
-		//TODO
+	public ResponseEntity<String> receiveNewWorkflow(@RequestBody EventMessage msg) {
+		UUID correspondingID = msg.getId();
+		WorkflowEntity wfEntity = WorkflowManager.getInstance().lookupWorkflowEntryId(correspondingID);
+
+		if (wfEntity == null) {
+			return new ResponseEntity<String>("Workflow not found", HttpStatus.NOT_FOUND);
+		}
+		
+		wfEntity.getEngine().handleEvent(msg);
 		return new ResponseEntity<String>("received", HttpStatus.ACCEPTED);
 
 	}
