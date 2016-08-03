@@ -20,7 +20,7 @@ import java.util.UUID;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 /**
- * This message is used to communicate the results of the workflow to the caller.
+ * This message is used to receive the results of the Workflow  of the Workflow microservice.
  * 
  * @author Marc Adolf
  *
