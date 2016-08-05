@@ -2,7 +2,8 @@
 *.class
 
 #
-target/
+*target/
 build/
 bin/
 .project/
+.gradle/
