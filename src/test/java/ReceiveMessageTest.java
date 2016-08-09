@@ -15,7 +15,7 @@ public class ReceiveMessageTest {
 		recvMessage.setId(UUID.randomUUID());
 		recvMessage.setType("BPMN2");
 		recvMessage.setWf(new byte[9]);
-		recvMessage.setCallbackAdress(new URI("se.informatik.uni-kiel.de"));
+		recvMessage.setCallbackAddress(new URI("se.informatik.uni-kiel.de"));
 		assertTrue(recvMessage.isValid());
 	}
 	
@@ -25,7 +25,7 @@ public class ReceiveMessageTest {
 		//missing id
 		recvMessage.setType("BPMN2");
 		recvMessage.setWf(new byte[9]);
-		recvMessage.setCallbackAdress(new URI("se.informatik.uni-kiel.de"));
+		recvMessage.setCallbackAddress(new URI("se.informatik.uni-kiel.de"));
 		assertFalse(recvMessage.isValid());
 	}
 }

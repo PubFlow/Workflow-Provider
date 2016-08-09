@@ -21,6 +21,10 @@ public class WFParameter {
 	private ParameterType payloadClazz;
 	private Object value;
 
+	public WFParameter(){
+		
+	}
+	
 	public WFParameter(String key, Object o) throws Exception{
 		setKey(key);
 		setValue(o);

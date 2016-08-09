@@ -18,7 +18,7 @@ package de.pfWorkflowWS.workflow.engines;
 import java.util.List;
 
 import de.pfWorkflowWS.restConnection.restMessages.EventMessage;
-import de.pfWorkflowWS.workflow.common.WFParameterList;
+import de.pfWorkflowWS.workflow.common.WFParameter;
 import de.pfWorkflowWS.workflow.common.WFType;
 import de.pfWorkflowWS.workflow.entity.PubFlow;
 
@@ -50,7 +50,7 @@ abstract public class WorkflowEngine implements Runnable{
 	 * @param wfID (long) : the ID of the workflow to start
 	 * @param params (WFParameter ...) : The list of the parameters needed by the Workflow
 	 */
-	public abstract void setParams(WFParameterList params);
+	public abstract void setParams(List<WFParameter> params);
 	
 	/**
 	 * Method to undeploy a deployed pubflow

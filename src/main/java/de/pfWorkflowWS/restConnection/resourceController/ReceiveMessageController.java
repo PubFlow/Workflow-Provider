@@ -15,10 +15,6 @@
  */
 package de.pfWorkflowWS.restConnection.resourceController;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.UUID;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -27,7 +23,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import de.pfWorkflowWS.restConnection.restMessages.ReceiveMessage;
-import de.pfWorkflowWS.workflow.common.WFType;
 import de.pfWorkflowWS.workflow.management.WorkflowManager;
 import de.pfWorkflowWS.workflow.management.WorkflowThread;
 
@@ -43,35 +38,27 @@ public class ReceiveMessageController {
 
 	@RequestMapping(value = "/executeNewWF", method = RequestMethod.POST)
 	public ResponseEntity<String> receiveNewWorkflow(@RequestBody ReceiveMessage msg) {
+		System.out.println("id:" +msg.getId());
+		System.out.println(msg.getType());
+		System.out.println(msg.getCallbackAddress());
+		System.out.println(msg.getWf());
 
 		if (!msg.isValid()) {
 			return new ResponseEntity<String>(
-					"Message is not valid: it needs an id, a type, a workflow and a callback adress",
+					"Message is not valid: it needs an id, a type, a workflow and a callback address",
 					HttpStatus.BAD_REQUEST);
 		}
-		// UUDI already registered
+		// UUId already registered
 		if (WorkflowManager.getInstance().lookupWorkflowEntryId(msg.getId()) != null) {
-			return new ResponseEntity<String>(
-					"Id "+msg.getId()+ " already exists in the system",
+			return new ResponseEntity<String>("Id " + msg.getId() + " already exists in the system",
 					HttpStatus.BAD_REQUEST);
 		}
-		
+
 		WorkflowThread worker = new WorkflowThread(msg);
 		worker.start();
-
-
+		//TODO is it ok to start the thread -> possibly get an answer before we send the response?
 		return new ResponseEntity<String>("received", HttpStatus.ACCEPTED);
 	}
-	
-	@RequestMapping(value = "/getWF", method = RequestMethod.GET)
-	public ReceiveMessage getRe() throws URISyntaxException{
-	ReceiveMessage recvMessage = new ReceiveMessage();
-	recvMessage.setCallbackAdress(new URI("se.informatik.uni-kiel.de"));
-	recvMessage.setId(UUID.randomUUID());
-	recvMessage.setWf(new byte[10]);
-	recvMessage.setType(WFType.BPMN2.toString());
-	return recvMessage;
-	}
-	
+
 
 }

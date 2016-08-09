@@ -38,7 +38,6 @@ import de.pfWorkflowWS.exceptions.WFOperationNotSupported;
 import de.pfWorkflowWS.restConnection.restMessages.EventMessage;
 import de.pfWorkflowWS.workflow.common.ParameterType;
 import de.pfWorkflowWS.workflow.common.WFParameter;
-import de.pfWorkflowWS.workflow.common.WFParameterList;
 import de.pfWorkflowWS.workflow.common.WFType;
 import de.pfWorkflowWS.workflow.entity.JBPMPubflow;
 import de.pfWorkflowWS.workflow.entity.PubFlow;
@@ -51,7 +50,7 @@ import de.pfWorkflowWS.workflow.entity.PubFlow;
 public class JBPMEngine extends WorkflowEngine {
 
 	private JBPMPubflow myWF;
-	WFParameterList parameter;
+	List<WFParameter> parameter;
 	private StatefulKnowledgeSession ksession;
 	static Logger myLogger;
 	// private ProcessInstance processInstance = null;
@@ -79,7 +78,7 @@ public class JBPMEngine extends WorkflowEngine {
 	/**
 	 * @return the parameter
 	 */
-	public synchronized WFParameterList getParameter() {
+	public synchronized List<WFParameter> getParameter() {
 		return parameter;
 	}
 
@@ -87,7 +86,7 @@ public class JBPMEngine extends WorkflowEngine {
 	 * @param parameter
 	 *            the parameter to set
 	 */
-	public synchronized void setParameter(WFParameterList parameter) {
+	public synchronized void setParameter(List<WFParameter> parameter) {
 		this.parameter = parameter;
 	}
 
@@ -159,12 +158,12 @@ public class JBPMEngine extends WorkflowEngine {
 	 */
 	private void runWF(){
 		myLogger.info("Trying to start workflow: " + myWF.getWFID());
-		WFParameterList params = parameter;
+		List<WFParameter> params = parameter;
 //		ProcessInstance instance = null;
 		try {
 			myLogger.info("Creating Knowledgebase ...");
 			myLogger.info("Setting process parameter");
-			for (WFParameter wfParam : params.getParameterList()) {
+			for (WFParameter wfParam : params) {
 
 				// set the parameter name to lower case, remove all spaces and
 				// the workflow appendix
@@ -231,7 +230,7 @@ public class JBPMEngine extends WorkflowEngine {
 	}
 
 	@Override
-	public void setParams(WFParameterList params){
+	public void setParams(List<WFParameter> params){
 		parameter = params;
 
 	}

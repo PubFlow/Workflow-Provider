@@ -17,19 +17,18 @@ package de.pfWorkflowWS.restConnection.restMessages;
 
 import java.util.UUID;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
 /**
  * This message is used to receive the results of the Workflow  of the Workflow microservice.
  * 
  * @author Marc Adolf
  *
  */
-@JsonIgnoreProperties(ignoreUnknown=true)
 public class ResponseMessage {
 	private UUID id;
     private String result;
     private String errorMessage;
+	private String newStatus;
+
     
     public ResponseMessage(){
     	
@@ -58,4 +57,12 @@ public class ResponseMessage {
   	public void setId(UUID id) {
   		this.id = id;
   	}
+
+	public String getNewStatus() {
+		return newStatus;
+	}
+
+	public void setNewStatus(String newStatus) {
+		this.newStatus = newStatus;
+	}
 }

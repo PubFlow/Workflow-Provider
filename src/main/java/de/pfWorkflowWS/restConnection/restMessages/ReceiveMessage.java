@@ -16,11 +16,12 @@
 package de.pfWorkflowWS.restConnection.restMessages;
 
 import java.net.URI;
+import java.util.List;
 import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-import de.pfWorkflowWS.workflow.common.WFParameterList;
+import de.pfWorkflowWS.workflow.common.WFParameter;
 
 /**
  * Represents the message which is given to the server to initialise a new
@@ -48,11 +49,11 @@ public class ReceiveMessage {
 	/**
 	 * Parameters used to execute the workflow.
 	 */
-	private WFParameterList workflowParameters;
+	private List<WFParameter> workflowParameters;
 	/**
 	 * Url to response to
 	 */
-	private URI callbackAdress;
+	private URI callbackAddress;
 
 	public ReceiveMessage() {
 	}
@@ -82,11 +83,11 @@ public class ReceiveMessage {
 		this.type = type;
 	}
 
-	public WFParameterList getWorkflowParameters() {
+	public List<WFParameter> getWorkflowParameters() {
 		return workflowParameters;
 	}
 
-	public void setWorkflowParameters(WFParameterList workflowParameters) {
+	public void setWorkflowParameters(List<WFParameter> workflowParameters) {
 		this.workflowParameters = workflowParameters;
 	}
 
@@ -94,21 +95,21 @@ public class ReceiveMessage {
 		return "WF message: id: " + id + " wf: " + wf;
 	}
 
-	public URI getCallbackAdress() {
-		return callbackAdress;
+	public URI getCallbackAddress() {
+		return callbackAddress;
 	}
 
-	public void setCallbackAdress(URI callbackAdress) {
-		this.callbackAdress = callbackAdress;
+	public void setCallbackAddress(URI callbackAdress) {
+		this.callbackAddress = callbackAdress;
 	}
 
 	/**
 	 * Checks if the message is valid. This contains only if all necessary
 	 * fields are not null.
 	 * 
-	 * @return true, if id, type, workflow and callbackAdress are not null
+	 * @return true, if id, type, workflow and callbackAddress are not null
 	 */
 	public Boolean isValid() {
-		return id != null && wf != null && type != null && callbackAdress != null;
+		return id != null && wf != null && type != null && callbackAddress != null;
 	}
 }

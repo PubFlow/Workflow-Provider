@@ -43,15 +43,23 @@ public class WorkflowThread extends Thread {
 		RestTemplate restTemplate = new RestTemplate();
 		UUID msgId = msg.getId();
 
+		// try {
+		// wfMan.addWorkflowEntity(msg);
+		// answer.setId(msgId);
+		// wfMan.startWorkflow(msgId);
+		// } catch (WFException e) {
+		// answer.setErrorMessage(e.getMessage());
+		// } // Better more verbose/clear result
+		// answer.setResult(wfMan.lookupWorkflowEntryId(msgId).getState().toString());
+		// restTemplate.postForObject(msg.getCallbackAddress(), answer,
+		// String.class);
+		// }
+
 		
-		try {
-			wfMan.addWorkflowEntity(msg);
-			answer.setId(msgId);
-			wfMan.startWorkflow(msgId);
-		} catch (WFException e) {
-			answer.setErrorMessage(e.getMessage());
-		} // Better more verbose/clear result
-		answer.setResult(wfMan.lookupWorkflowEntryId(msgId).getState().toString());
-		restTemplate.postForObject(msg.getCallbackAdress(), answer, String.class);
+		//Test code
+		answer.setId(msgId);
+		answer.setResult("not executed");
+		answer.setNewStatus("Ready for Pangaea-Import");
+		restTemplate.postForObject(msg.getCallbackAddress(), answer, String.class);
 	}
 }

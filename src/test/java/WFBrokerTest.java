@@ -24,19 +24,19 @@ public class WFBrokerTest {
 	public void setup() throws URISyntaxException {
 		broker = WFBroker.getInstance();
 		recvMessageBPMN2 = new ReceiveMessage();
-		recvMessageBPMN2.setCallbackAdress(new URI("se.informatik.uni-kiel.de"));
+		recvMessageBPMN2.setCallbackAddress(new URI("se.informatik.uni-kiel.de"));
 		recvMessageBPMN2.setId(UUID.randomUUID());
 		recvMessageBPMN2.setWf(new byte[10]);
 		recvMessageBPMN2.setType(WFType.BPMN2.toString());
 
 		recvMessageBPEL = new ReceiveMessage();
-		recvMessageBPEL.setCallbackAdress(new URI("se.informatik.uni-kiel.de"));
+		recvMessageBPEL.setCallbackAddress(new URI("se.informatik.uni-kiel.de"));
 		recvMessageBPEL.setId(UUID.randomUUID());
 		recvMessageBPEL.setWf(new byte[10]);
 		recvMessageBPEL.setType(WFType.BPEL.toString());
 
 		recvMessageSomething = new ReceiveMessage();
-		recvMessageSomething.setCallbackAdress(new URI("se.informatik.uni-kiel.de"));
+		recvMessageSomething.setCallbackAddress(new URI("se.informatik.uni-kiel.de"));
 		recvMessageSomething.setId(UUID.randomUUID());
 		recvMessageSomething.setWf(new byte[10]);
 		recvMessageSomething.setType("some unsopported engine");
@@ -53,6 +53,7 @@ public class WFBrokerTest {
 	// has to be adapted if BPEL is implemented in the future
 	@Test(expected = EngineNotInitializedException.class)
 	public void initWfEngineTestBPEL() throws EngineNotInitializedException {
+		@SuppressWarnings("unused")
 		WorkflowEngine engine = broker.initWfEngine(recvMessageBPEL);
 		// assertTrue(engine.getClass().equals(BPELEngine.class));
 

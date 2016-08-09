@@ -16,6 +16,7 @@
 package de.pfWorkflowWS.workflow;
 
 import java.lang.Thread.UncaughtExceptionHandler;
+import java.util.List;
 import java.util.UUID;
 
 import org.slf4j.Logger;
@@ -24,7 +25,7 @@ import org.slf4j.LoggerFactory;
 import de.pfWorkflowWS.exceptions.EngineNotInitializedException;
 import de.pfWorkflowWS.exceptions.WFExecutionFailedException;
 import de.pfWorkflowWS.restConnection.restMessages.ReceiveMessage;
-import de.pfWorkflowWS.workflow.common.WFParameterList;
+import de.pfWorkflowWS.workflow.common.WFParameter;
 import de.pfWorkflowWS.workflow.common.WFType;
 import de.pfWorkflowWS.workflow.engines.JBPMEngine;
 import de.pfWorkflowWS.workflow.engines.WorkflowEngine;
@@ -109,7 +110,7 @@ public class WFBroker {
 
 		myLogger.info("Deploying WF " + wC.getId());
 		engine.deployWF(myWF);
-		WFParameterList params = wC.getWorkflowParameters();
+		List<WFParameter> params = wC.getWorkflowParameters();
 
 		if (params != null) {
 			myLogger.info(wC.getId() + " Parameter found ...");

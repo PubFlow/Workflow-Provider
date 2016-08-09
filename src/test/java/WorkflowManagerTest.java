@@ -28,7 +28,7 @@ public class WorkflowManagerTest {
 	public void setup() throws URISyntaxException{
 		wfMan = WorkflowManager.getInstance();
 		recvMessage = new ReceiveMessage();
-		recvMessage.setCallbackAdress(new URI("se.informatik.uni-kiel.de"));
+		recvMessage.setCallbackAddress(new URI("se.informatik.uni-kiel.de"));
 		recvMessage.setId(UUID.randomUUID());
 		recvMessage.setWf(new byte[10]);
 		recvMessage.setType(WFType.BPMN2.toString());
