@@ -34,14 +34,11 @@ import de.pfWorkflowWS.workflow.management.WorkflowThread;
  *
  */
 @RestController
+@RequestMapping("/workflow")
 public class ReceiveMessageController {
 
-	@RequestMapping(value = "/executeNewWF", method = RequestMethod.POST)
-	public ResponseEntity<String> receiveNewWorkflow(@RequestBody ReceiveMessage msg) {
-		System.out.println("id:" +msg.getId());
-		System.out.println(msg.getType());
-		System.out.println(msg.getCallbackAddress());
-		System.out.println(msg.getWf());
+	@RequestMapping(value = "/OCNWorkflow", method = RequestMethod.POST)
+	public ResponseEntity<String> executeOCNWorkflow(@RequestBody ReceiveMessage msg) {
 
 		if (!msg.isValid()) {
 			return new ResponseEntity<String>(
@@ -56,9 +53,22 @@ public class ReceiveMessageController {
 
 		WorkflowThread worker = new WorkflowThread(msg);
 		worker.start();
-		//TODO is it ok to start the thread -> possibly get an answer before we send the response?
+		// TODO is it ok to start the thread -> possibly get an answer before we
+		// send the response?
 		return new ResponseEntity<String>("received", HttpStatus.ACCEPTED);
 	}
 
+	@RequestMapping(value = "/EPrintsWorkflow", method = RequestMethod.POST)
+	public ResponseEntity<String> executeEPrintsWorkflow(@RequestBody ReceiveMessage msg) {
+
+		// TODO
+		return new ResponseEntity<String>("received", HttpStatus.ACCEPTED);
+	}
+
+	@RequestMapping(value = "/CVOOWorkflow", method = RequestMethod.POST)
+	public ResponseEntity<String> executeCVOOWorkflow(@RequestBody ReceiveMessage msg) {
+		// TODO
+		return new ResponseEntity<String>("received", HttpStatus.ACCEPTED);
+	}
 
 }

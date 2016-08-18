@@ -1,7 +1,5 @@
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.UUID;
 
 import org.junit.Before;
@@ -25,12 +23,11 @@ public class WorkflowManagerTest {
 	WorkflowManager wfMan;
 
 	@Before 
-	public void setup() throws URISyntaxException{
+	public void setup() {
 		wfMan = WorkflowManager.getInstance();
 		recvMessage = new ReceiveMessage();
-		recvMessage.setCallbackAddress(new URI("se.informatik.uni-kiel.de"));
-		recvMessage.setId(UUID.randomUUID());
-		recvMessage.setWf(new byte[10]);
+		recvMessage.setCallbackAddress("http://se.informatik.uni-kiel.de");
+		recvMessage.setId(UUID.randomUUID().toString());
 		recvMessage.setType(WFType.BPMN2.toString());
 
 	}

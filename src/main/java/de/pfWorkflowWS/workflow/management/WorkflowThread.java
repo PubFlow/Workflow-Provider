@@ -15,8 +15,6 @@
  */
 package de.pfWorkflowWS.workflow.management;
 
-import java.util.UUID;
-
 import org.springframework.web.client.RestTemplate;
 
 import de.pfWorkflowWS.exceptions.WFException;
@@ -41,7 +39,7 @@ public class WorkflowThread extends Thread {
 		WorkflowManager wfMan = WorkflowManager.getInstance();
 		ResponseMessage answer = new ResponseMessage();
 		RestTemplate restTemplate = new RestTemplate();
-		UUID msgId = msg.getId();
+		String msgId = msg.getId();
 
 		 try {
 		 wfMan.addWorkflowEntity(msg);

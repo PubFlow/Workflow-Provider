@@ -16,7 +16,6 @@
 package de.pfWorkflowWS.restConnection.restMessages;
 
 import java.util.List;
-import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -29,7 +28,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class EventMessage {
-	private UUID id;
+	private String id;
 	private String eventType;
 	// TODO parameterlist/data
 	private List<?> data;
@@ -38,11 +37,11 @@ public class EventMessage {
 
 	}
 
-	public UUID getId() {
+	public String getId() {
 		return id;
 	}
 
-	public void setId(UUID id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 

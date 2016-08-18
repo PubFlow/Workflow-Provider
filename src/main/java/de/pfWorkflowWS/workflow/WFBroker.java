@@ -17,7 +17,6 @@ package de.pfWorkflowWS.workflow;
 
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.List;
-import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -83,7 +82,9 @@ public class WFBroker {
 			myLogger.info("BPMN2.0 Workflow detected");
 			myWF = new JBPMPubflow();
 			myWF.setWFID(wC.getId().toString());
-			myWF.setWfDef(wC.getWf());
+
+			// TODO replace this with some db read or similar
+			// myWF.setWfDef(wC.getWf());
 			clazz = JBPMEngine.class;
 
 			// myLogger.info("Name : "+wC.getWorkflowName());
@@ -135,7 +136,7 @@ public class WFBroker {
 	 */
 	public void executeWfEngine(WorkflowEntity entity) throws WFExecutionFailedException {
 		Thread.UncaughtExceptionHandler exHandler = new WorkflowExceptionHandler(entity);
-		UUID id = entity.getInitMsg().getId();
+		String id = entity.getInitMsg().getId();
 		WorkflowEngine engine = entity.getEngine();
 		Throwable possibleException;
 

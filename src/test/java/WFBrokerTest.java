@@ -1,7 +1,5 @@
 import static org.junit.Assert.assertTrue;
 
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.UUID;
 
 import org.junit.Before;
@@ -21,24 +19,21 @@ public class WFBrokerTest {
 	ReceiveMessage recvMessageSomething;
 
 	@Before
-	public void setup() throws URISyntaxException {
+	public void setup()  {
 		broker = WFBroker.getInstance();
 		recvMessageBPMN2 = new ReceiveMessage();
-		recvMessageBPMN2.setCallbackAddress(new URI("se.informatik.uni-kiel.de"));
-		recvMessageBPMN2.setId(UUID.randomUUID());
-		recvMessageBPMN2.setWf(new byte[10]);
+		recvMessageBPMN2.setCallbackAddress("http://se.informatik.uni-kiel.de");
+		recvMessageBPMN2.setId(UUID.randomUUID().toString());
 		recvMessageBPMN2.setType(WFType.BPMN2.toString());
 
 		recvMessageBPEL = new ReceiveMessage();
-		recvMessageBPEL.setCallbackAddress(new URI("se.informatik.uni-kiel.de"));
-		recvMessageBPEL.setId(UUID.randomUUID());
-		recvMessageBPEL.setWf(new byte[10]);
+		recvMessageBPEL.setCallbackAddress("http://se.informatik.uni-kiel.de");
+		recvMessageBPEL.setId(UUID.randomUUID().toString());
 		recvMessageBPEL.setType(WFType.BPEL.toString());
 
 		recvMessageSomething = new ReceiveMessage();
-		recvMessageSomething.setCallbackAddress(new URI("se.informatik.uni-kiel.de"));
-		recvMessageSomething.setId(UUID.randomUUID());
-		recvMessageSomething.setWf(new byte[10]);
+		recvMessageSomething.setCallbackAddress("http://se.informatik.uni-kiel.de");
+		recvMessageSomething.setId(UUID.randomUUID().toString());
 		recvMessageSomething.setType("some unsopported engine");
 
 	}

@@ -38,7 +38,7 @@ import de.pfWorkflowWS.workflow.management.WorkflowEntity.ExecutionState;
 public class WorkflowManager {
 
 	private static WorkflowManager instance = null;
-	private HashMap<UUID, WorkflowEntity> registeredWorkflows = new HashMap<UUID, WorkflowEntity>();
+	private HashMap<String, WorkflowEntity> registeredWorkflows = new HashMap<String, WorkflowEntity>();
 
 	private WorkflowManager() {
 	}
@@ -57,26 +57,24 @@ public class WorkflowManager {
 	/**
 	 * Adds a new workflow to the list of currently managed tasks. The
 	 * {@link WorkflowEntity} will be created and a {@link UUID} will be
-	 * returned.
-	 * Workflows with id's that already exist are rejected. 
-	 * Designed to control the access of this list in this control
-	 * class.
+	 * returned. Workflows with id's that already exist are rejected. Designed
+	 * to control the access of this list in this control class.
 	 * 
 	 * @param newRecMsg
 	 *            The {@link ReceiveMessage} that will be used as a base for a
 	 *            new {@link WorkflowEntity}.
 	 * @return the {@link UUID} which maps to the created
 	 *         {@link WorkflowEntity}.
-	 * @throws DuplicateIDException 
+	 * @throws DuplicateIDException
 	 */
 	synchronized public void addWorkflowEntity(ReceiveMessage newRecMsg) throws DuplicateIDException {
 
-		UUID msgId = newRecMsg.getId();
+		String msgId = newRecMsg.getId();
 
-		if(lookupWorkflowEntryId(msgId) != null){
+		if (lookupWorkflowEntryId(msgId) != null) {
 			throw new DuplicateIDException("Workflow with ID already exists");
 		}
-		
+
 		registeredWorkflows.put(msgId, new WorkflowEntity(newRecMsg));
 	}
 
@@ -90,7 +88,7 @@ public class WorkflowManager {
 	 * @return the {@link WorkflowEntity} or if no entry was found null is
 	 *         returned.
 	 */
-	synchronized public WorkflowEntity lookupWorkflowEntryId(UUID id) {
+	synchronized public WorkflowEntity lookupWorkflowEntryId(String id) {
 		return registeredWorkflows.get(id);
 	}
 
@@ -110,13 +108,14 @@ public class WorkflowManager {
 	// TODO save the WorkflowEntry for persistence
 
 	/**
-	 *  Starts the workflow and waits for its cmpletion.
-	 *  Changes the state of the {@link WorkflowEntity}.
+	 * Starts the workflow and waits for its cmpletion. Changes the state of the
+	 * {@link WorkflowEntity}.
+	 * 
 	 * @param msgId
 	 * @throws WFExecutionFailedException
-	 * @throws EngineNotInitializedException 
+	 * @throws EngineNotInitializedException
 	 */
-	public void startWorkflow(UUID msgId) throws WFException  {
+	public void startWorkflow(String msgId) throws WFException {
 		WorkflowEntity currentWorkflow = registeredWorkflows.get(msgId);
 
 		// currently not possible, if changed later add exception handling
@@ -130,7 +129,7 @@ public class WorkflowManager {
 			// do nothing
 			return;
 		}
-		
+
 		WFBroker wfBroker = WFBroker.getInstance();
 		currentWorkflow.setState(ExecutionState.initialized);
 		WorkflowEngine engine = wfBroker.initWfEngine(currentWorkflow.getInitMsg());
@@ -143,7 +142,6 @@ public class WorkflowManager {
 			throw e;
 		}
 		currentWorkflow.setState(ExecutionState.finished);
-
 
 	}
 

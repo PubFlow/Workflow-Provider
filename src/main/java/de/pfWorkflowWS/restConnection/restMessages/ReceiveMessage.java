@@ -15,9 +15,7 @@
  */
 package de.pfWorkflowWS.restConnection.restMessages;
 
-import java.net.URI;
 import java.util.List;
-import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -37,11 +35,7 @@ public class ReceiveMessage {
 	/**
 	 * Used to map the workflow to other services, events and responses.
 	 */
-	private UUID id;
-	/**
-	 * The workflow to be executed, as byte array.
-	 */
-	private byte[] wf;
+	private String id;
 	/**
 	 * The type of the workflow (e.g. BPMN2)
 	 */
@@ -51,28 +45,19 @@ public class ReceiveMessage {
 	 */
 	private List<WFParameter> workflowParameters;
 	/**
-	 * Url to response to
+	 * URL to response to
 	 */
-	private URI callbackAddress;
+	private String callbackAddress;
 
 	public ReceiveMessage() {
 	}
 
-	public UUID getId() {
+	public String getId() {
 		return id;
 	}
 
-	public void setId(UUID id) {
+	public void setId(String id) {
 		this.id = id;
-	}
-
-	public byte[] getWf() {
-		return wf;
-	}
-
-	public void setWf(byte[] wf) {
-		this.wf = wf;
-
 	}
 
 	public String getType() {
@@ -91,15 +76,11 @@ public class ReceiveMessage {
 		this.workflowParameters = workflowParameters;
 	}
 
-	public String toString() {
-		return "WF message: id: " + id + " wf: " + wf;
-	}
-
-	public URI getCallbackAddress() {
+	public String getCallbackAddress() {
 		return callbackAddress;
 	}
 
-	public void setCallbackAddress(URI callbackAdress) {
+	public void setCallbackAddress(String callbackAdress) {
 		this.callbackAddress = callbackAdress;
 	}
 
@@ -110,6 +91,6 @@ public class ReceiveMessage {
 	 * @return true, if id, type, workflow and callbackAddress are not null
 	 */
 	public Boolean isValid() {
-		return id != null && wf != null && type != null && callbackAddress != null;
+		return id != null && callbackAddress != null;
 	}
 }

@@ -15,8 +15,6 @@
  */
 package de.pfWorkflowWS.restConnection.restMessages;
 
-import java.util.UUID;
-
 /**
  * This message is used to receive the results of the Workflow  of the Workflow microservice.
  * 
@@ -24,7 +22,7 @@ import java.util.UUID;
  *
  */
 public class ResponseMessage {
-	private UUID id;
+	private String id;
     private String result;
     private String errorMessage;
 	private String newStatus;
@@ -34,7 +32,7 @@ public class ResponseMessage {
     	
     }
     
-    public UUID getId(){
+    public String getId(){
     	return id;
     }
     
@@ -54,7 +52,7 @@ public class ResponseMessage {
   		this.errorMessage = errorMessage;
   	}
 
-  	public void setId(UUID id) {
+  	public void setId(String id) {
   		this.id = id;
   	}
 
