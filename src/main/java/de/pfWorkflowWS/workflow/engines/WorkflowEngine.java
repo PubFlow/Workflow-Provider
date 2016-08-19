@@ -66,5 +66,4 @@ abstract public class WorkflowEngine implements Runnable{
 	 */
 	public abstract void stopWF(long wfID);
 	
-	public abstract List<WFType> getCompatibleWFTypes();
 }

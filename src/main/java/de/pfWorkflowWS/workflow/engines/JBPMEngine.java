@@ -15,7 +15,6 @@
  */
 package de.pfWorkflowWS.workflow.engines;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletionException;
 
@@ -38,7 +37,6 @@ import de.pfWorkflowWS.exceptions.WFOperationNotSupported;
 import de.pfWorkflowWS.restConnection.restMessages.EventMessage;
 import de.pfWorkflowWS.workflow.common.ParameterType;
 import de.pfWorkflowWS.workflow.common.WFParameter;
-import de.pfWorkflowWS.workflow.common.WFType;
 import de.pfWorkflowWS.workflow.entity.JBPMPubflow;
 import de.pfWorkflowWS.workflow.entity.PubFlow;
 
@@ -214,12 +212,6 @@ public class JBPMEngine extends WorkflowEngine {
 		// processInstance = instance;
 	}
 
-	@Override
-	public List<WFType> getCompatibleWFTypes() {
-		List<WFType> result = new ArrayList<WFType>();
-		result.add(WFType.BPMN2);
-		return result;
-	}
 
 	@Override
 	public void run(){

@@ -37,10 +37,6 @@ public class ReceiveMessage {
 	 */
 	private String id;
 	/**
-	 * The type of the workflow (e.g. BPMN2)
-	 */
-	private String type;
-	/**
 	 * Parameters used to execute the workflow.
 	 */
 	private List<WFParameter> workflowParameters;
@@ -58,14 +54,6 @@ public class ReceiveMessage {
 
 	public void setId(String id) {
 		this.id = id;
-	}
-
-	public String getType() {
-		return type;
-	}
-
-	public void setType(String type) {
-		this.type = type;
 	}
 
 	public List<WFParameter> getWorkflowParameters() {

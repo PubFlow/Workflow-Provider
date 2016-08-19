@@ -12,7 +12,6 @@ public class ReceiveMessageTest {
 	public void testIsValidSuccess() {
 		ReceiveMessage recvMessage = new ReceiveMessage();
 		recvMessage.setId(UUID.randomUUID().toString());
-		recvMessage.setType("BPMN2");
 		recvMessage.setCallbackAddress("http://se.informatik.uni-kiel.de");
 		assertTrue(recvMessage.isValid());
 	}
@@ -21,7 +20,6 @@ public class ReceiveMessageTest {
 	public void testIsValidFail() {
 		ReceiveMessage recvMessage = new ReceiveMessage();
 		//missing id
-		recvMessage.setType("BPMN2");
 		recvMessage.setCallbackAddress("http://se.informatik.uni-kiel.de");
 		assertFalse(recvMessage.isValid());
 	}

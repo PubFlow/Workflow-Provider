@@ -23,8 +23,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import de.pfWorkflowWS.restConnection.restMessages.ReceiveMessage;
-import de.pfWorkflowWS.workflow.management.WorkflowManager;
-import de.pfWorkflowWS.workflow.management.WorkflowThread;
+import de.pfWorkflowWS.workflow.jbpm.JBPMWorkflow;
+import de.pfWorkflowWS.workflow.jbpm.OCNWorkflow;
+import de.pfWorkflowWS.workflow.jbpm.WorkflowJBPMThread;
 
 /**
  * Accepts the incoming request for new workflow executions. The incoming
@@ -35,26 +36,24 @@ import de.pfWorkflowWS.workflow.management.WorkflowThread;
  */
 @RestController
 @RequestMapping("/workflow")
-public class ReceiveMessageController {
+public class WorkflowServiceController {
 
 	@RequestMapping(value = "/OCNWorkflow", method = RequestMethod.POST)
 	public ResponseEntity<String> executeOCNWorkflow(@RequestBody ReceiveMessage msg) {
+		
+		JBPMWorkflow offeredWorkflow = OCNWorkflow.getInstance();
 
 		if (!msg.isValid()) {
 			return new ResponseEntity<String>(
 					"Message is not valid: it needs an id, a type, a workflow and a callback address",
 					HttpStatus.BAD_REQUEST);
 		}
-		// UUId already registered
-		if (WorkflowManager.getInstance().lookupWorkflowEntryId(msg.getId()) != null) {
-			return new ResponseEntity<String>("Id " + msg.getId() + " already exists in the system",
-					HttpStatus.BAD_REQUEST);
-		}
 
-		WorkflowThread worker = new WorkflowThread(msg);
+		WorkflowJBPMThread worker = new WorkflowJBPMThread(msg,offeredWorkflow);
 		worker.start();
 		// TODO is it ok to start the thread -> possibly get an answer before we
 		// send the response?
+		//TODO are duplicate executions of workflows  ok?
 		return new ResponseEntity<String>("received", HttpStatus.ACCEPTED);
 	}
 

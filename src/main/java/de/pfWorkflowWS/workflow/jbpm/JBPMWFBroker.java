@@ -13,24 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.pfWorkflowWS.workflow;
+package de.pfWorkflowWS.workflow.jbpm;
 
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.List;
 
+import org.drools.KnowledgeBase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.pfWorkflowWS.exceptions.EngineNotInitializedException;
 import de.pfWorkflowWS.exceptions.WFExecutionFailedException;
 import de.pfWorkflowWS.restConnection.restMessages.ReceiveMessage;
+import de.pfWorkflowWS.workflow.WorkflowEntity;
 import de.pfWorkflowWS.workflow.common.WFParameter;
 import de.pfWorkflowWS.workflow.common.WFType;
 import de.pfWorkflowWS.workflow.engines.JBPMEngine;
 import de.pfWorkflowWS.workflow.engines.WorkflowEngine;
 import de.pfWorkflowWS.workflow.entity.JBPMPubflow;
 import de.pfWorkflowWS.workflow.entity.PubFlow;
-import de.pfWorkflowWS.workflow.management.WorkflowEntity;
 
 /**
  * Responsible for initializing and executing the workflows. Differentiates the
@@ -40,21 +41,21 @@ import de.pfWorkflowWS.workflow.management.WorkflowEntity;
  * @author Marc Adolf, Peer Brauer
  *
  */
-public class WFBroker {
+public class JBPMWFBroker {
 
-	private static volatile WFBroker instance;
+	private static JBPMWFBroker instance;
 
 	private Logger myLogger;
 
-	private WFBroker() {
+	private JBPMWFBroker() {
 		myLogger = LoggerFactory.getLogger(this.getClass());
 		myLogger.info("Starting WFBroker");
 
 	}
 
-	public static synchronized WFBroker getInstance() {
+	public static synchronized JBPMWFBroker getInstance() {
 		if (instance == null) {
-			instance = new WFBroker();
+			instance = new JBPMWFBroker();
 		}
 		return instance;
 	}
@@ -63,62 +64,34 @@ public class WFBroker {
 	 * Initializes the workflow engine with the given parameters in the
 	 * {@link ReceiveMessage}.
 	 * 
-	 * @param wC
+	 * @param workflowCall
 	 *            the {@link ReceiveMessage} that provides the needed
 	 *            information.
 	 * @return the {@link WorkflowEngine} that can execute the workflow.
 	 * @throws EngineNotInitializedException
 	 */
-	public WorkflowEngine initWfEngine(ReceiveMessage wC) throws EngineNotInitializedException {
-		myLogger.info("Received WF-Msg");
+	public WorkflowEngine initWfEngine(ReceiveMessage workflowCall, KnowledgeBase currentWorkflowKnowledgeBase)
+			throws EngineNotInitializedException {
+		myLogger.info("Received jBPM (BPMN 2.0) WF-Msg");
 
-		myLogger.info("Loading WF with ID (" + wC.getId() + ") from WFRepo");
-		String type = wC.getType();
+		myLogger.info("Loading WF with ID (" +workflowCall.getId() + ") from WFRepo");
 
-		PubFlow myWF = null;
-		Class<? extends WorkflowEngine> clazz = WorkflowEngine.class;
+		PubFlow myWF = new JBPMPubflow();
+		
+		myWF.setWFID(workflowCall.getId());
 
-		if (type.equals(WFType.BPMN2.name())) {
-			myLogger.info("BPMN2.0 Workflow detected");
-			myWF = new JBPMPubflow();
-			myWF.setWFID(wC.getId().toString());
+		WorkflowEngine engine = new JBPMEngine();
 
-			// TODO replace this with some db read or similar
-			// myWF.setWfDef(wC.getWf());
-			clazz = JBPMEngine.class;
-
-			// myLogger.info("Name : "+wC.getWorkflowName());
-
-		} else if (type.equals(WFType.BPEL.name())) {
-			myLogger.info("BPEL Workflow detected (" + wC.getId() + ")");
-			// TODO
-			throw new EngineNotInitializedException("BPEL not yet supported");
-		} else {
-			myLogger.error(wC.getId() + " Workflow NOT deployed >> Type could not be resolved");
-			throw new EngineNotInitializedException("Workflow type not supported");
-		}
-
-		WorkflowEngine engine = null;
-
-		try {
-			myLogger.info("Creating new " + clazz.getCanonicalName() + " for " + wC.getId());
-			engine = clazz.newInstance();
-			myLogger.info("Instance created for " + wC.getId() + " !");
-
-		} catch (ReflectiveOperationException e) {
-			e.printStackTrace();
-		}
-
-		myLogger.info("Deploying WF " + wC.getId());
+		myLogger.info("Deploying WF " + workflowCall.getId());
 		engine.deployWF(myWF);
-		List<WFParameter> params = wC.getWorkflowParameters();
+		List<WFParameter> params = workflowCall.getWorkflowParameters();
 
 		if (params != null) {
-			myLogger.info(wC.getId() + " Parameter found ...");
+			myLogger.info(workflowCall.getId() + " Parameter found ...");
 			engine.setParams(params);
 
 		} else {
-			myLogger.info(wC.getId() + " No Parameter found!");
+			myLogger.info(workflowCall.getId() + " No Parameter found!");
 
 		}
 
