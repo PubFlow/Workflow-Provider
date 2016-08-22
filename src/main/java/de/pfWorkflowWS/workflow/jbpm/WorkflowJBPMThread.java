@@ -15,76 +15,45 @@
  */
 package de.pfWorkflowWS.workflow.jbpm;
 
-import org.drools.KnowledgeBase;
-import org.springframework.web.client.RestTemplate;
-
-import de.pfWorkflowWS.exceptions.EngineNotInitializedException;
-import de.pfWorkflowWS.exceptions.WFException;
-import de.pfWorkflowWS.exceptions.WFExecutionFailedException;
-import de.pfWorkflowWS.restConnection.restMessages.ReceiveMessage;
-import de.pfWorkflowWS.restConnection.restMessages.ResponseMessage;
+import de.pfWorkflowWS.restConnection.restMessages.WorkflowReceiveMessage;
 import de.pfWorkflowWS.workflow.WorkflowEntity;
 import de.pfWorkflowWS.workflow.WorkflowEntity.ExecutionState;
-import de.pfWorkflowWS.workflow.engines.WorkflowEngine;
+import de.pfWorkflowWS.workflow.jbpm.availableWorkflows.JBPMWorkflow;
 
 /**
- * Worker thread to execute a single workflow.
+ * Worker thread to execute a single Workflow call.
  * 
  * @author Marc Adolf
  *
  */
 public class WorkflowJBPMThread extends Thread {
-	private ReceiveMessage msg;
 	private WorkflowEntity currentWorkflowInstance;
 	private JBPMWorkflow workflow;
-	
-	public WorkflowJBPMThread(ReceiveMessage msg, JBPMWorkflow workflow) {
-		this.msg = msg;
+
+	public WorkflowJBPMThread(WorkflowReceiveMessage msg, JBPMWorkflow workflow) {
 		this.workflow = workflow;
 		currentWorkflowInstance = new WorkflowEntity(msg);
 	}
 
 	@Override
 	public void run() {
-		ResponseMessage answer = new ResponseMessage();
-		RestTemplate restTemplate = new RestTemplate();
-		String msgId = msg.getId();
 
 		try {
-			answer.setId(msgId);
-			this.startWorkflow(msgId);
-		} catch (WFException e) {
-			answer.setErrorMessage(e.getMessage());
-		} // Better more verbose/clear result
-		answer.setResult(currentWorkflowInstance.getState().toString());
-		restTemplate.postForObject(msg.getCallbackAddress(), answer, String.class);
-	}
+			currentWorkflowInstance.setState(ExecutionState.started);
+			// sync execution to the best of my knowledge
+			workflow.startNewWorkflowSession(currentWorkflowInstance);
 
-	/**
-	 * Starts the workflow and waits for its completion. Changes the state of the
-	 * {@link WorkflowEntity}.
-	 * 
-	 * @param msgId
-	 * @throws WFExecutionFailedException
-	 * @throws EngineNotInitializedException
-	 */
-	public void startWorkflow(String msgId) throws WFException {
+			currentWorkflowInstance.setState(ExecutionState.finished);
 
-		KnowledgeBase currentWorkflowKnowledgeBase = workflow.getWorkflowKnowledgeBase() ;
-		
-		//TODO can the wf broker be eliminated?
-		JBPMWFBroker wfBroker = JBPMWFBroker.getInstance();
-		currentWorkflowInstance.setState(ExecutionState.initialized);
-		WorkflowEngine engine = wfBroker.initWfEngine(currentWorkflowInstance.getInitMsg(),currentWorkflowKnowledgeBase);
-		currentWorkflowInstance.setEngine(engine);
-		currentWorkflowInstance.setState(ExecutionState.started);
-		try {
-			wfBroker.executeWfEngine(currentWorkflowInstance);
-		} catch (WFExecutionFailedException e) {
+		} catch (Exception e) {
 			currentWorkflowInstance.setState(ExecutionState.error);
-			throw e;
-		}
-		currentWorkflowInstance.setState(ExecutionState.finished);
+			currentWorkflowInstance.setTriggeredException(e);
 
+			workflow.handleError(currentWorkflowInstance);
+
+		}
+		
+		workflow.handleResult(currentWorkflowInstance);
 	}
+
 }

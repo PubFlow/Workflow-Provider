@@ -30,7 +30,7 @@ import de.pfWorkflowWS.workflow.common.WFParameter;
  *
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ReceiveMessage {
+public class WorkflowReceiveMessage {
 
 	/**
 	 * Used to map the workflow to other services, events and responses.
@@ -45,7 +45,7 @@ public class ReceiveMessage {
 	 */
 	private String callbackAddress;
 
-	public ReceiveMessage() {
+	public WorkflowReceiveMessage() {
 	}
 
 	public String getId() {

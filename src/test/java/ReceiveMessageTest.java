@@ -5,12 +5,12 @@ import java.util.UUID;
 
 import org.junit.Test;
 
-import de.pfWorkflowWS.restConnection.restMessages.ReceiveMessage;
+import de.pfWorkflowWS.restConnection.restMessages.WorkflowReceiveMessage;
 
 public class ReceiveMessageTest {
 	@Test
 	public void testIsValidSuccess() {
-		ReceiveMessage recvMessage = new ReceiveMessage();
+		WorkflowReceiveMessage recvMessage = new WorkflowReceiveMessage();
 		recvMessage.setId(UUID.randomUUID().toString());
 		recvMessage.setCallbackAddress("http://se.informatik.uni-kiel.de");
 		assertTrue(recvMessage.isValid());
@@ -18,7 +18,7 @@ public class ReceiveMessageTest {
 	
 	@Test
 	public void testIsValidFail() {
-		ReceiveMessage recvMessage = new ReceiveMessage();
+		WorkflowReceiveMessage recvMessage = new WorkflowReceiveMessage();
 		//missing id
 		recvMessage.setCallbackAddress("http://se.informatik.uni-kiel.de");
 		assertFalse(recvMessage.isValid());

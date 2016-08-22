@@ -22,14 +22,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import de.pfWorkflowWS.restConnection.restMessages.ReceiveMessage;
-import de.pfWorkflowWS.workflow.jbpm.JBPMWorkflow;
-import de.pfWorkflowWS.workflow.jbpm.OCNWorkflow;
+import de.pfWorkflowWS.restConnection.restMessages.WorkflowReceiveMessage;
 import de.pfWorkflowWS.workflow.jbpm.WorkflowJBPMThread;
+import de.pfWorkflowWS.workflow.jbpm.availableWorkflows.JBPMWorkflow;
+import de.pfWorkflowWS.workflow.jbpm.availableWorkflows.OCNJBPMWorkflow;
 
 /**
  * Accepts the incoming request for new workflow executions. The incoming
- * message is represented by {@link ReceiveMessage}.
+ * message is represented by {@link WorkflowReceiveMessage}.
  * 
  * @author Marc Adolf
  *
@@ -39,33 +39,32 @@ import de.pfWorkflowWS.workflow.jbpm.WorkflowJBPMThread;
 public class WorkflowServiceController {
 
 	@RequestMapping(value = "/OCNWorkflow", method = RequestMethod.POST)
-	public ResponseEntity<String> executeOCNWorkflow(@RequestBody ReceiveMessage msg) {
-		
-		JBPMWorkflow offeredWorkflow = OCNWorkflow.getInstance();
+	public ResponseEntity<String> executeOCNWorkflow(@RequestBody WorkflowReceiveMessage msg) {
 
 		if (!msg.isValid()) {
 			return new ResponseEntity<String>(
 					"Message is not valid: it needs an id, a type, a workflow and a callback address",
 					HttpStatus.BAD_REQUEST);
 		}
+		JBPMWorkflow offeredWorkflow = OCNJBPMWorkflow.getInstance();
 
-		WorkflowJBPMThread worker = new WorkflowJBPMThread(msg,offeredWorkflow);
+		WorkflowJBPMThread worker = new WorkflowJBPMThread(msg, offeredWorkflow);
 		worker.start();
 		// TODO is it ok to start the thread -> possibly get an answer before we
 		// send the response?
-		//TODO are duplicate executions of workflows  ok?
+		// TODO are duplicate executions of workflows ok?
 		return new ResponseEntity<String>("received", HttpStatus.ACCEPTED);
 	}
 
 	@RequestMapping(value = "/EPrintsWorkflow", method = RequestMethod.POST)
-	public ResponseEntity<String> executeEPrintsWorkflow(@RequestBody ReceiveMessage msg) {
+	public ResponseEntity<String> executeEPrintsWorkflow(@RequestBody WorkflowReceiveMessage msg) {
 
 		// TODO
 		return new ResponseEntity<String>("received", HttpStatus.ACCEPTED);
 	}
 
 	@RequestMapping(value = "/CVOOWorkflow", method = RequestMethod.POST)
-	public ResponseEntity<String> executeCVOOWorkflow(@RequestBody ReceiveMessage msg) {
+	public ResponseEntity<String> executeCVOOWorkflow(@RequestBody WorkflowReceiveMessage msg) {
 		// TODO
 		return new ResponseEntity<String>("received", HttpStatus.ACCEPTED);
 	}

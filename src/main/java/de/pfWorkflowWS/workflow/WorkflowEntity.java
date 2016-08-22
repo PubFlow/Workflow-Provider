@@ -15,8 +15,7 @@
  */
 package de.pfWorkflowWS.workflow;
 
-import de.pfWorkflowWS.restConnection.restMessages.ReceiveMessage;
-import de.pfWorkflowWS.workflow.engines.WorkflowEngine;
+import de.pfWorkflowWS.restConnection.restMessages.WorkflowReceiveMessage;
 
 /**
  * Represents an execution of a workflow. It is used to coordinate states,
@@ -29,11 +28,10 @@ import de.pfWorkflowWS.workflow.engines.WorkflowEngine;
 public class WorkflowEntity {
 	// BETTER maybe a enum can be useful in the future
 	// many information are already saved in the initial message
-	private ReceiveMessage initMsg;
-	private WorkflowEngine engine;
-	private Throwable uncaughtException;
+	private WorkflowReceiveMessage initMsg;
+	private Throwable triggeredException;
 
-	public WorkflowEntity(ReceiveMessage initMsg) {
+	public WorkflowEntity(WorkflowReceiveMessage initMsg) {
 		this.initMsg = initMsg;
 		state = ExecutionState.received;
 
@@ -49,26 +47,18 @@ public class WorkflowEntity {
 		this.state = state;
 	}
 
-	public ReceiveMessage getInitMsg() {
+	public WorkflowReceiveMessage getInitMsg() {
 		return initMsg;
 	}
 
-	public WorkflowEngine getEngine() {
-		return engine;
+	synchronized public Throwable getTriggeredException() {
+		return triggeredException;
 	}
 
-	public void setEngine(WorkflowEngine engine) {
-		this.engine = engine;
+	synchronized public void setTriggeredException(Throwable uncaughtException) {
+		this.triggeredException = uncaughtException;
 	}
 
-	synchronized public Throwable getUncaughtException() {
-		return uncaughtException;
-	}
-
-	synchronized public void setUncaughtException(Throwable uncaughtException) {
-		this.uncaughtException = uncaughtException;
-	}
-	
 	/**
 	 * Represents the current state of one workflow entity.
 	 * 
