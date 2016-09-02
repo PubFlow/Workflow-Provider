@@ -40,7 +40,7 @@ public class WorkflowJBPMThread extends Thread {
 
 		try {
 			currentWorkflowInstance.setState(ExecutionState.started);
-			// sync execution to the best of my knowledge
+			// blocking execution (to the best of my knowledge)
 			workflow.startNewWorkflowSession(currentWorkflowInstance);
 
 			currentWorkflowInstance.setState(ExecutionState.finished);

@@ -3,24 +3,24 @@ package de.pfWorkflowWS.workflow.jbpm.availableWorkflows;
 import de.pfWorkflowWS.workflow.WorkflowEntity;
 
 /**
- * Represents the OCN {@link JBPMWorkflow}.
+ * Represents the CVOO {@link JBPMWorkflow}.
  * 
  * @author Marc Adolf
  *
  */
-public class OCNJBPMWorkflow extends JBPMWorkflow {
+public class CVOOJBPMWorkflow extends JBPMWorkflow {
 
-	private static OCNJBPMWorkflow instance = null;
-	private static String fileName = "OCN.bpmn";
+	private static CVOOJBPMWorkflow instance = null;
+	private static String fileName = "EPRINTS.bpmn";
 
-	private OCNJBPMWorkflow() {
+	private CVOOJBPMWorkflow(){
 		super(fileName, "OCN");
 
 	}
 
-	synchronized public static OCNJBPMWorkflow getInstance() {
+	synchronized public static CVOOJBPMWorkflow getInstance(){
 		if (instance == null) {
-			instance = new OCNJBPMWorkflow();
+			instance = new CVOOJBPMWorkflow();
 		}
 		return instance;
 	}

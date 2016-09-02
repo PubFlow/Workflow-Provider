@@ -15,6 +15,8 @@
  */
 package de.pfWorkflowWS.restConnection.resourceController;
 
+import java.io.IOException;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,12 +26,15 @@ import org.springframework.web.bind.annotation.RestController;
 
 import de.pfWorkflowWS.restConnection.restMessages.WorkflowReceiveMessage;
 import de.pfWorkflowWS.workflow.jbpm.WorkflowJBPMThread;
+import de.pfWorkflowWS.workflow.jbpm.availableWorkflows.CVOOJBPMWorkflow;
+import de.pfWorkflowWS.workflow.jbpm.availableWorkflows.EPrintsJBPMWorkflow;
 import de.pfWorkflowWS.workflow.jbpm.availableWorkflows.JBPMWorkflow;
 import de.pfWorkflowWS.workflow.jbpm.availableWorkflows.OCNJBPMWorkflow;
 
 /**
- * Accepts the incoming request for new workflow executions. The incoming
+ * Accepts the incoming request for new Workflow executions. The incoming
  * message is represented by {@link WorkflowReceiveMessage}.
+ * Does not wait for the result of the Workflow execution.
  * 
  * @author Marc Adolf
  *
@@ -41,31 +46,55 @@ public class WorkflowServiceController {
 	@RequestMapping(value = "/OCNWorkflow", method = RequestMethod.POST)
 	public ResponseEntity<String> executeOCNWorkflow(@RequestBody WorkflowReceiveMessage msg) {
 
-		if (!msg.isValid()) {
-			return new ResponseEntity<String>(
-					"Message is not valid: it needs an id, a type, a workflow and a callback address",
-					HttpStatus.BAD_REQUEST);
-		}
-		JBPMWorkflow offeredWorkflow = OCNJBPMWorkflow.getInstance();
+		/*
+		 * OCN 
+		 */
+		return handleJBPMWorkflow(OCNJBPMWorkflow.getInstance(), msg);
 
-		WorkflowJBPMThread worker = new WorkflowJBPMThread(msg, offeredWorkflow);
-		worker.start();
-		// TODO is it ok to start the thread -> possibly get an answer before we
-		// send the response?
-		// TODO are duplicate executions of workflows ok?
-		return new ResponseEntity<String>("received", HttpStatus.ACCEPTED);
 	}
 
 	@RequestMapping(value = "/EPrintsWorkflow", method = RequestMethod.POST)
 	public ResponseEntity<String> executeEPrintsWorkflow(@RequestBody WorkflowReceiveMessage msg) {
 
-		// TODO
-		return new ResponseEntity<String>("received", HttpStatus.ACCEPTED);
+		/*
+		 * EPrints 
+		 */
+		return handleJBPMWorkflow(EPrintsJBPMWorkflow.getInstance(), msg);
+
 	}
 
 	@RequestMapping(value = "/CVOOWorkflow", method = RequestMethod.POST)
 	public ResponseEntity<String> executeCVOOWorkflow(@RequestBody WorkflowReceiveMessage msg) {
-		// TODO
+
+		/*
+		 * CVOO
+		 */
+		return handleJBPMWorkflow(CVOOJBPMWorkflow.getInstance(), msg);
+
+	}
+
+	/*
+	 * Often JBPM Workflows share the same code.
+	 * This class validates the message, initializes the JBPM Workflow with its Knowledgebase and  starts a new Thread
+	 * to execute the workflow.
+	 * Responses are generated representing the success.
+	 * Does not wait for the execution to finish.
+	 */
+	private ResponseEntity<String> handleJBPMWorkflow(JBPMWorkflow offeredWorkflow, WorkflowReceiveMessage msg) {
+
+		if (!msg.isValid()) {
+			return new ResponseEntity<String>(
+					"Message is not valid: it needs an id, a type, a workflow and a callback address",
+					HttpStatus.BAD_REQUEST);
+		}
+		try {
+			offeredWorkflow.init();
+			WorkflowJBPMThread worker = new WorkflowJBPMThread(msg, offeredWorkflow);
+			worker.start();
+		} catch (IOException e) {
+			e.printStackTrace();
+			return new ResponseEntity<String>("Workflow could not be loaded", HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 		return new ResponseEntity<String>("received", HttpStatus.ACCEPTED);
 	}
 
