@@ -15,6 +15,9 @@
  */
 package de.pfWorkflowWS.workflow.jbpm;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.pfWorkflowWS.restConnection.restMessages.WorkflowReceiveMessage;
 import de.pfWorkflowWS.workflow.WorkflowEntity;
 import de.pfWorkflowWS.workflow.WorkflowEntity.ExecutionState;
@@ -27,6 +30,7 @@ import de.pfWorkflowWS.workflow.jbpm.availableWorkflows.JBPMWorkflow;
  *
  */
 public class WorkflowJBPMThread extends Thread {
+	private Logger myLogger = LoggerFactory.getLogger(getClass());
 	private WorkflowEntity currentWorkflowInstance;
 	private JBPMWorkflow workflow;
 
@@ -46,13 +50,16 @@ public class WorkflowJBPMThread extends Thread {
 			currentWorkflowInstance.setState(ExecutionState.finished);
 
 		} catch (Exception e) {
+			myLogger.info("Exception during workflow execution. ID: " + currentWorkflowInstance.getInitMsg().getId());
+			myLogger.info(e.getMessage());
 			currentWorkflowInstance.setState(ExecutionState.error);
 			currentWorkflowInstance.setTriggeredException(e);
 
 			workflow.handleError(currentWorkflowInstance);
-
+			return;
 		}
 		
+		myLogger.info("Workflow with ID '"+ currentWorkflowInstance.getInitMsg().getId()+"' successfully executed ");
 		workflow.handleResult(currentWorkflowInstance);
 	}
 

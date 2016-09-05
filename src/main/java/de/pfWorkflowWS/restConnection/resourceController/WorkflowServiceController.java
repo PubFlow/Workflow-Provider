@@ -30,11 +30,12 @@ import de.pfWorkflowWS.workflow.jbpm.availableWorkflows.CVOOJBPMWorkflow;
 import de.pfWorkflowWS.workflow.jbpm.availableWorkflows.EPrintsJBPMWorkflow;
 import de.pfWorkflowWS.workflow.jbpm.availableWorkflows.JBPMWorkflow;
 import de.pfWorkflowWS.workflow.jbpm.availableWorkflows.OCNJBPMWorkflow;
+import de.pfWorkflowWS.workflow.jbpm.availableWorkflows.TestFlowJBPMWorkflow;
 
 /**
  * Accepts the incoming request for new Workflow executions. The incoming
- * message is represented by {@link WorkflowReceiveMessage}.
- * Does not wait for the result of the Workflow execution.
+ * message is represented by {@link WorkflowReceiveMessage}. Does not wait for
+ * the result of the Workflow execution.
  * 
  * @author Marc Adolf
  *
@@ -47,7 +48,7 @@ public class WorkflowServiceController {
 	public ResponseEntity<String> executeOCNWorkflow(@RequestBody WorkflowReceiveMessage msg) {
 
 		/*
-		 * OCN 
+		 * OCN
 		 */
 		return handleJBPMWorkflow(OCNJBPMWorkflow.getInstance(), msg);
 
@@ -57,7 +58,7 @@ public class WorkflowServiceController {
 	public ResponseEntity<String> executeEPrintsWorkflow(@RequestBody WorkflowReceiveMessage msg) {
 
 		/*
-		 * EPrints 
+		 * EPrints
 		 */
 		return handleJBPMWorkflow(EPrintsJBPMWorkflow.getInstance(), msg);
 
@@ -73,18 +74,31 @@ public class WorkflowServiceController {
 
 	}
 
+	@RequestMapping(value = "/TestWorkflow", method = RequestMethod.GET)
+	public ResponseEntity<String> executeTestWorkflow(
+	// @RequestBody WorkflowReceiveMessage msg
+	) {
+
+		/*
+		 * Test
+		 */
+		WorkflowReceiveMessage msg = new WorkflowReceiveMessage();
+		msg.setId("testId");
+		msg.setCallbackAddress("http://www.example.de");
+		return handleJBPMWorkflow(TestFlowJBPMWorkflow.getInstance(), msg);
+
+	}
+
 	/*
-	 * Often JBPM Workflows share the same code.
-	 * This class validates the message, initializes the JBPM Workflow with its Knowledgebase and  starts a new Thread
-	 * to execute the workflow.
-	 * Responses are generated representing the success.
-	 * Does not wait for the execution to finish.
+	 * Often JBPM Workflows share the same code. This class validates the
+	 * message, initializes the JBPM Workflow with its Knowledgebase and starts
+	 * a new Thread to execute the workflow. Responses are generated
+	 * representing the success. Does not wait for the execution to finish.
 	 */
 	private ResponseEntity<String> handleJBPMWorkflow(JBPMWorkflow offeredWorkflow, WorkflowReceiveMessage msg) {
 
 		if (!msg.isValid()) {
-			return new ResponseEntity<String>(
-					"Message is not valid: it needs an id, a type, a workflow and a callback address",
+			return new ResponseEntity<String>("Message is not valid: it needs an id, a type and a callback address",
 					HttpStatus.BAD_REQUEST);
 		}
 		try {

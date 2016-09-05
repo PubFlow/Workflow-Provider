@@ -64,6 +64,8 @@ public abstract class JBPMWorkflow {
 	private void createKnowledgeBase() {
 		myLogger.info("Trying to add WF to knowledgebase");
 		KnowledgeBuilder kbuilder = null;
+		System.out.println("name:" +fileName);
+		System.out.println("file:"+ bpmn);
 		try {
 			kbuilder = KnowledgeBuilderFactory.newKnowledgeBuilder();
 			kbuilder.add(ResourceFactory.newByteArrayResource(bpmn), ResourceType.BPMN2);
@@ -136,7 +138,8 @@ public abstract class JBPMWorkflow {
 	 * Handles occurrences of errors during the execution according to each
 	 * Workflow definition. May restart the Workflow or just create an
 	 * appropriate answer.
-	 * 
+	 * This way may not be be consistent to the messaging inside the BPMN Workflows
+	 *  
 	 * @param entity
 	 *            in which the error occurred.
 	 */
