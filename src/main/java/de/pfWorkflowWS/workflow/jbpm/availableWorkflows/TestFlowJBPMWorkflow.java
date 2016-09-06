@@ -3,7 +3,7 @@ package de.pfWorkflowWS.workflow.jbpm.availableWorkflows;
 import de.pfWorkflowWS.workflow.WorkflowEntity;
 
 /**
- * Represents the EPrints {@link JBPMWorkflow}.
+ * Represents a simple test {@link JBPMWorkflow}.
  * 
  * @author Marc Adolf
  *

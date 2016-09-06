@@ -74,31 +74,28 @@ public class WorkflowServiceController {
 
 	}
 
-	@RequestMapping(value = "/TestWorkflow", method = RequestMethod.GET)
-	public ResponseEntity<String> executeTestWorkflow(
-	// @RequestBody WorkflowReceiveMessage msg
-	) {
+	@RequestMapping(value = "/TestWorkflow", method = RequestMethod.POST)
+	public ResponseEntity<String> executeTestWorkflow(@RequestBody WorkflowReceiveMessage msg) {
 
 		/*
 		 * Test
 		 */
-		WorkflowReceiveMessage msg = new WorkflowReceiveMessage();
-		msg.setId("testId");
-		msg.setCallbackAddress("http://www.example.de");
+		// WorkflowReceiveMessage msg = new WorkflowReceiveMessage();
+		// msg.setId("testId");
+		// msg.setCallbackAddress("http://www.example.de");
 		return handleJBPMWorkflow(TestFlowJBPMWorkflow.getInstance(), msg);
-
 	}
 
 	/*
 	 * Often JBPM Workflows share the same code. This class validates the
 	 * message, initializes the JBPM Workflow with its Knowledgebase and starts
-	 * a new Thread to execute the workflow. Responses are generated
+	 * a new Thread to execute the Workflow. Responses are generated
 	 * representing the success. Does not wait for the execution to finish.
 	 */
 	private ResponseEntity<String> handleJBPMWorkflow(JBPMWorkflow offeredWorkflow, WorkflowReceiveMessage msg) {
 
 		if (!msg.isValid()) {
-			return new ResponseEntity<String>("Message is not valid: it needs an id, a type and a callback address",
+			return new ResponseEntity<String>("Message is not valid: it needs an id and a field for the callbackAddress",
 					HttpStatus.BAD_REQUEST);
 		}
 		try {
