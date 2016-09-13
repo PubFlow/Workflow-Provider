@@ -46,7 +46,6 @@ public class WorkflowJBPMThread extends Thread {
 			currentWorkflowInstance.setState(ExecutionState.started);
 			// blocking execution (to the best of my knowledge)
 			workflow.startNewWorkflowSession(currentWorkflowInstance);
-
 			currentWorkflowInstance.setState(ExecutionState.finished);
 
 		} catch (Exception e) {
@@ -58,8 +57,8 @@ public class WorkflowJBPMThread extends Thread {
 			workflow.handleError(currentWorkflowInstance);
 			return;
 		}
-		
-		myLogger.info("Workflow with ID '"+ currentWorkflowInstance.getInitMsg().getId()+"' successfully executed ");
+
+		myLogger.info("Workflow with ID '" + currentWorkflowInstance.getInitMsg().getId() + "' successfully executed ");
 		workflow.handleResult(currentWorkflowInstance);
 	}
 

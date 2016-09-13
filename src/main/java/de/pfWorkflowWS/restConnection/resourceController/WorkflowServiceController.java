@@ -17,6 +17,8 @@ package de.pfWorkflowWS.restConnection.resourceController;
 
 import java.io.IOException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -83,6 +85,11 @@ public class WorkflowServiceController {
 		// WorkflowReceiveMessage msg = new WorkflowReceiveMessage();
 		// msg.setId("testId");
 		// msg.setCallbackAddress("http://www.example.de");
+//		System.out.println(msg);
+//		System.out.println("id: " + msg.getId());
+//		System.out.println("cB: " + msg.getCallbackAddress());
+//		System.out.println("par: " + msg.getWorkflowParameters());
+//		System.out.println("valid?: " + msg.isValid());
 		return handleJBPMWorkflow(TestFlowJBPMWorkflow.getInstance(), msg);
 	}
 
@@ -93,10 +100,15 @@ public class WorkflowServiceController {
 	 * representing the success. Does not wait for the execution to finish.
 	 */
 	private ResponseEntity<String> handleJBPMWorkflow(JBPMWorkflow offeredWorkflow, WorkflowReceiveMessage msg) {
+		Logger myLogger = LoggerFactory.getLogger(getClass());
+
+		myLogger.debug("Message id: " + msg.getId());
+		myLogger.debug("Message Callback Address:" + msg.getCallbackAddress());
+		myLogger.debug("Message is valid?: " + msg.isValid());
 
 		if (!msg.isValid()) {
-			return new ResponseEntity<String>("Message is not valid: it needs an id and a field for the callbackAddress",
-					HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<String>(
+					"Message is not valid: it needs an id and a field for the callbackAddress", HttpStatus.BAD_REQUEST);
 		}
 		try {
 			offeredWorkflow.init();

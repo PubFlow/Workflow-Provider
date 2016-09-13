@@ -64,8 +64,6 @@ public abstract class JBPMWorkflow {
 	private void createKnowledgeBase() {
 		myLogger.info("Trying to add WF to knowledgebase");
 		KnowledgeBuilder kbuilder = null;
-		System.out.println("name:" +fileName);
-		System.out.println("file:"+ bpmn);
 		try {
 			kbuilder = KnowledgeBuilderFactory.newKnowledgeBuilder();
 			kbuilder.add(ResourceFactory.newByteArrayResource(bpmn), ResourceType.BPMN2);
@@ -151,10 +149,9 @@ public abstract class JBPMWorkflow {
 		String msgId = msg.getId();
 
 		answer.setId(msgId);
-
 		answer.setErrorMessage(entity.getTriggeredException().getMessage());
 		answer.setResult(entity.getState().toString());
-		restTemplate.postForObject(msg.getCallbackAddress(), answer, String.class);
+		restTemplate.postForEntity(msg.getCallbackAddress(), answer, String.class,msgId);
 	}
 
 }
