@@ -16,45 +16,36 @@
 package de.pfWorkflowWS.restConnection.restMessages;
 
 /**
- * This message is used to receive the results of the Workflow  of the Workflow microservice.
+ * This message is used to receive the results of the Workflow of the Workflow
+ * microservice.
  * 
  * @author Marc Adolf
  *
  */
 public class ResponseMessage {
-	private String id;
-    private String result;
-    private String errorMessage;
+	private String result;
+	private String errorMessage;
 	private String newStatus;
 
-    
-    public ResponseMessage(){
-    	
-    }
-    
-    public String getId(){
-    	return id;
-    }
-    
-    public String getResult() {
-  		return result;
-  	}
+	public ResponseMessage() {
 
-  	public void setResult(String result) {
-  		this.result = result;
-  	}
+	}
 
-  	public String getErrorMessage() {
-  		return errorMessage;
-  	}
+	public String getResult() {
+		return result;
+	}
 
-  	public void setErrorMessage(String errorMessage) {
-  		this.errorMessage = errorMessage;
-  	}
+	public void setResult(String result) {
+		this.result = result;
+	}
 
-  	public void setId(String id) {
-  		this.id = id;
-  	}
+	public String getErrorMessage() {
+		return errorMessage;
+	}
+
+	public void setErrorMessage(String errorMessage) {
+		this.errorMessage = errorMessage;
+	}
 
 	public String getNewStatus() {
 		return newStatus;

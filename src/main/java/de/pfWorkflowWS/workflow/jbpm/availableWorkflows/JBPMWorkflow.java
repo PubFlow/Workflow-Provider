@@ -37,6 +37,13 @@ public abstract class JBPMWorkflow {
 	private boolean isInit = false;
 	private String fileName;
 
+	/**
+	 * 
+	 * @param fileName
+	 * @param workflowName
+	 *            the Workflow name has to match the id of the BPMN2 File (as
+	 *            seen in the property tab of eclipse)
+	 */
 	public JBPMWorkflow(String fileName, String workflowName) {
 		myLogger = LoggerFactory.getLogger(this.getClass());
 		this.workflowName = workflowName;
@@ -46,7 +53,9 @@ public abstract class JBPMWorkflow {
 	abstract public void handleResult(WorkflowEntity entity);
 
 	/**
-	 * Loads the Workflow from a predefined file and creates a {@link KnowledgeBase}
+	 * Loads the Workflow from a predefined file and creates a
+	 * {@link KnowledgeBase}
+	 * 
 	 * @throws IOException
 	 */
 	public void init() throws IOException {
@@ -106,8 +115,13 @@ public abstract class JBPMWorkflow {
 
 			// legacy 'payload' class was reduced to only use String
 			String valueS = (String) wfParameter.getValue();
-			myLogger.info("Setting parameter >>" + key + "<< to >>" + valueS + "<<");
-			ksession.setGlobal(key, valueS);
+			try {
+				ksession.setGlobal(key, valueS);
+				myLogger.info("Setting parameter >>" + key + "<< to >>" + valueS + "<<");
+
+			} catch (RuntimeException e) {
+				myLogger.info("Could not set parameter with key: " + key);
+			}
 
 		}
 
@@ -135,9 +149,9 @@ public abstract class JBPMWorkflow {
 	/**
 	 * Handles occurrences of errors during the execution according to each
 	 * Workflow definition. May restart the Workflow or just create an
-	 * appropriate answer.
-	 * This way may not be be consistent to the messaging inside the BPMN Workflows
-	 *  
+	 * appropriate answer. This way may not be be consistent to the messaging
+	 * inside the BPMN Workflows
+	 * 
 	 * @param entity
 	 *            in which the error occurred.
 	 */
@@ -146,12 +160,14 @@ public abstract class JBPMWorkflow {
 		ResponseMessage answer = new ResponseMessage();
 		RestTemplate restTemplate = new RestTemplate();
 		WorkflowReceiveMessage msg = entity.getInitMsg();
-		String msgId = msg.getId();
+		String issueKey = msg.getId();
+		// Unfortunately this is highly coupled to the Jira Workflow
+		answer.setNewStatus("Data Needs Correction");
 
-		answer.setId(msgId);
-		answer.setErrorMessage(entity.getTriggeredException().getMessage());
+		answer.setErrorMessage("Execption during Workflow execution. "+entity.getTriggeredException().getMessage());
 		answer.setResult(entity.getState().toString());
-		restTemplate.postForEntity(msg.getCallbackAddress(), answer, String.class,msgId);
+		restTemplate.postForEntity(msg.getCallbackAddress(), answer, String.class, issueKey);
+
 	}
 
 }

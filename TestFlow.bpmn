@@ -12,12 +12,12 @@
              xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
              xmlns:tns="http://www.jboss.org/drools">
 
-  <process processType="Private" isExecutable="true" id="Sample" name="Sample Process" >
+  <process processType="Private" isExecutable="true" id="Test-WF" name="Sample Process" >
 
     <!-- nodes -->
     <startEvent id="_1" name="StartProcess"  isInterrupting="true"/>
     <scriptTask id="_jbpm-unique-4" name="Script" scriptFormat="http://www.java.com/java" >
-      <script>throw new Exception("blub");</script>
+      <script>throw new Exception("Fail of test workflow intended");</script>
     </scriptTask>
     <endEvent id="_jbpm-unique-5" name="End" />
 
@@ -28,7 +28,7 @@
   </process>
 
   <bpmndi:BPMNDiagram>
-    <bpmndi:BPMNPlane bpmnElement="Sample" >
+    <bpmndi:BPMNPlane bpmnElement="Test-WF" >
       <bpmndi:BPMNShape bpmnElement="_1" >
         <dc:Bounds x="16" y="16" width="48" height="48" />
       </bpmndi:BPMNShape>
@@ -44,7 +44,7 @@
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="_jbpm-unique-4-_jbpm-unique-5" >
         <di:waypoint x="246" y="42" />
-        <di:waypoint x="503" y="44" />
+        <di:waypoint x="503" y="45" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

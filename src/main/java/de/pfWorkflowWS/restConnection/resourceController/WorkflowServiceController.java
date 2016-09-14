@@ -85,11 +85,12 @@ public class WorkflowServiceController {
 		// WorkflowReceiveMessage msg = new WorkflowReceiveMessage();
 		// msg.setId("testId");
 		// msg.setCallbackAddress("http://www.example.de");
-//		System.out.println(msg);
-//		System.out.println("id: " + msg.getId());
-//		System.out.println("cB: " + msg.getCallbackAddress());
-//		System.out.println("par: " + msg.getWorkflowParameters());
-//		System.out.println("valid?: " + msg.isValid());
+		
+		System.out.println(msg);
+		System.out.println("id: " + msg.getId());
+		System.out.println("cB: " + msg.getCallbackAddress());
+		System.out.println("par: " + msg.getWorkflowParameters());
+		System.out.println("valid?: " + msg.isValid());
 		return handleJBPMWorkflow(TestFlowJBPMWorkflow.getInstance(), msg);
 	}
 

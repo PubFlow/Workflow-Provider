@@ -50,7 +50,7 @@ public class WorkflowJBPMThread extends Thread {
 
 		} catch (Exception e) {
 			myLogger.info("Exception during workflow execution. ID: " + currentWorkflowInstance.getInitMsg().getId());
-			myLogger.info(e.getMessage());
+			myLogger.info("Exception message: "+ e.getMessage());
 			currentWorkflowInstance.setState(ExecutionState.error);
 			currentWorkflowInstance.setTriggeredException(e);
 
