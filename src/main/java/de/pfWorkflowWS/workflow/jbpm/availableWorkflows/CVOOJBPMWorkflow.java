@@ -11,10 +11,10 @@ import de.pfWorkflowWS.workflow.WorkflowEntity;
 public class CVOOJBPMWorkflow extends JBPMWorkflow {
 
 	private static CVOOJBPMWorkflow instance = null;
-	private static String fileName = "EPRINTS.bpmn";
+	private static String fileName = "CVOO.bpmn";
 
 	private CVOOJBPMWorkflow(){
-		super(fileName, "OCN");
+		super(fileName, "de.pubflow.CVOO");
 
 	}
 

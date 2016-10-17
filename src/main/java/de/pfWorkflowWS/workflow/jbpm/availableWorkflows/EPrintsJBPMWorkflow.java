@@ -17,7 +17,7 @@ public class EPrintsJBPMWorkflow extends JBPMWorkflow {
 	private static String fileName = "EPRINTS.bpmn";
 
 	private EPrintsJBPMWorkflow(){
-		super(fileName, "CVOO");
+		super(fileName, "de.pubflow.EPRINTS");
 
 	}
 
