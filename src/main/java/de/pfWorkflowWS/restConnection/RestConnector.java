@@ -15,6 +15,7 @@
  */
 
 package de.pfWorkflowWS.restConnection;
+
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -28,11 +29,11 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class RestConnector {
 
-    public static void main(String[] args) throws Exception {
-    	//TODO map incoming events to workflow entities and trigger them
-        SpringApplication.run(RestConnector.class, args);
-    }
-    
+	public static void main(String[] args) throws Exception {
+		//TODO map incoming events to workflow entities and trigger them
+		SpringApplication.run(RestConnector.class, args);
+	}
+
 }
 
 

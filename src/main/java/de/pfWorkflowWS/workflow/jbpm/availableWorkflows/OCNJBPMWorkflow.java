@@ -14,7 +14,7 @@ public class OCNJBPMWorkflow extends JBPMWorkflow {
 	private static String fileName = "OCN.bpmn";
 
 	private OCNJBPMWorkflow() {
-		super(fileName, "OCN");
+		super(fileName, "de.pubflow.OCN");
 
 	}
 

@@ -12,63 +12,63 @@
              xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
              xmlns:tns="http://www.jboss.org/drools">
 
-  <itemDefinition id="ItemDefinition_22" />
+  <itemDefinition id="ItemDefinition_22" structureRef="de.pubflow.common.entity.DataContainer" />
 
   <process processType="Private" isExecutable="true" id="de.pubflow.CVOO" name="CVOO" tns:packageName="de.pubflow" tns:version="1" >
 
     <extensionElements>
-     <tns:import name="de.pubflow.common.DataContainer" />
-     <tns:import name="java.util.HashMap" />
-     <tns:import name="de.pubflow." />
-     
-     <tns:global identifier="author" type="String" />
-     <tns:global identifier="project" type="String" />
-     <tns:global identifier="legid" type="String" />
+     <tns:import name="de.pubflow.common.JiraRestConnectorHelper" />
+     <tns:import name="de.pubflow.common.entity.DataContainer" />
      <tns:global identifier="issuekey" type="String" />
-     <tns:global identifier="source" type="String" />
-     <tns:global identifier="status" type="String" />
-     <tns:global identifier="targetpath" type="String" />
-     <tns:global identifier="filename" type="String" />
-     <tns:global identifier="pid" type="String" />
-     <tns:global identifier="login" type="String" />
+     <tns:global identifier="author" type="String" />
      <tns:global identifier="topology" type="String" />
-     <tns:global identifier="reference" type="String" />
+     <tns:global identifier="legid" type="String" />
+     <tns:global identifier="project" type="String" />
+     <tns:global identifier="pid" type="String" />
+     <tns:global identifier="source" type="String" />
      <tns:global identifier="legcomment" type="String" />
+     <tns:global identifier="login" type="String" />
+     <tns:global identifier="reference" type="String" />
+     <tns:global identifier="filename" type="String" />
+     <tns:global identifier="comment" type="String" />
+     <tns:global identifier="targetpath" type="String" />
+     <tns:global identifier="status" type="String" />
     </extensionElements>
-    
     <!-- process variables -->
-    <property id="tempResult" itemSubjectRef="ItemDefinition_22"/>
+    <property id="data" itemSubjectRef="ItemDefinition_22"/>
 
     <!-- nodes -->
     <startEvent id="StartEvent_1" name="StartProcess"  isInterrupting="true"/>
     <endEvent id="EndEvent_1" name="" />
     <scriptTask id="ScriptTask_2" name="Load Data from CVOO DB" scriptFormat="http://www.java.com/java" >
-      <script>JiraRestConnectorHelper restConnector = new JiraRestConnectorHelper("http://localhost:2990/jira/rest/myrestresource/1.0/pubflow/");
-HashMap&lt;String, Object&gt; data = new HashMap&lt;String, Object&gt;();
-data.put("legId", legid);
-restConnector.getDocumentContent("/pubflow/cvoo/" + issueKey + "/getData", data);</script>
+      <script>JiraRestConnectorHelper c = new JiraRestConnectorHelper("http://localhost:8181/pubflow");
+
+data = new DataContainer(issuekey);
+data.put("de.pubflow.services.cvoo.PluginAllocator.getData.legid", legid);
+
+data = c.getDocumentContent("/cvoo/" + issuekey + "/getData", data);</script>
     </scriptTask>
     <scriptTask id="ScriptTask_3" name="Map Parameters (CVOO to Pangaea)" scriptFormat="http://www.java.com/java" >
-      <script>JiraRestConnectorHelper restConnector = new JiraRestConnectorHelper("http://localhost:2990/jira/rest/myrestresource/1.0/pubflow/");
-HashMap&lt;String, Object&gt; data = new HashMap&lt;String, Object&gt;();
-restConnector.getDocumentContent("/pubflow/cvoo/" + issueKey + "/getData", data);</script>
+      <script>JiraRestConnectorHelper c = new JiraRestConnectorHelper("http://localhost:8181/pubflow");
+
+data = c.getDocumentContent("/cvoo/" +  issuekey + "/convert", data);</script>
     </scriptTask>
     <scriptTask id="ScriptTask_4" name="Generate 4d File" scriptFormat="http://www.java.com/java" >
-      <script>ComMap data = (ComMap) tempResult;
+      <script>JiraRestConnectorHelper c = new JiraRestConnectorHelper("http://localhost:8181/pubflow");
 
-data.put("de.pubflow.services.ocn.PluginAllocator.toCSV.author", (String) author);
-data.put("de.pubflow.services.ocn.PluginAllocator.toCSV.source", (String) source);
-data.put("de.pubflow.services.ocn.PluginAllocator.toCSV.reference", (String) reference);
-data.put("de.pubflow.services.ocn.PluginAllocator.toCSV.fileName", (String) filename);
-data.put("de.pubflow.services.ocn.PluginAllocator.toCSV.pid", (String) pid);
-data.put("de.pubflow.services.ocn.PluginAllocator.toCSV.comment", (String) legcomment);
-data.put("de.pubflow.services.ocn.PluginAllocator.toCSV.project", (String) project);
-data.put("de.pubflow.services.ocn.PluginAllocator.toCSV.topology", (String) topology);
-data.put("de.pubflow.services.ocn.PluginAllocator.toCSV.status", (String) status);
-data.put("de.pubflow.services.ocn.PluginAllocator.toCSV.login", (String) login);
-data.put("de.pubflow.services.ocn.PluginAllocator.toCSV.targetPath", (String) targetpath);
+data.put("de.pubflow.services.ocn.PluginAllocator.toCSV.author", author);
+data.put("de.pubflow.services.ocn.PluginAllocator.toCSV.source", source);
+data.put("de.pubflow.services.ocn.PluginAllocator.toCSV.reference", reference);
+data.put("de.pubflow.services.ocn.PluginAllocator.toCSV.fileName", filename);
+data.put("de.pubflow.services.ocn.PluginAllocator.toCSV.pid", pid);
+data.put("de.pubflow.services.ocn.PluginAllocator.toCSV.comment", legcomment);
+data.put("de.pubflow.services.ocn.PluginAllocator.toCSV.project", project);
+data.put("de.pubflow.services.ocn.PluginAllocator.toCSV.topology", topology);
+data.put("de.pubflow.services.ocn.PluginAllocator.toCSV.status", status);
+data.put("de.pubflow.services.ocn.PluginAllocator.toCSV.login", login);
+data.put("de.pubflow.services.ocn.PluginAllocator.toCSV.targetPath", targetpath);
 
-de.pubflow.server.services.ocn.PluginAllocator.toCSV(data);</script>
+data = c.getDocumentContent("/cvoo/" + issuekey + "/toCSV", data);</script>
     </scriptTask>
 
     <!-- connections -->
@@ -92,7 +92,7 @@ de.pubflow.server.services.ocn.PluginAllocator.toCSV(data);</script>
         <dc:Bounds x="387" y="325" width="80" height="48" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="ScriptTask_3" >
-        <dc:Bounds x="209" y="322" width="80" height="48" />
+        <dc:Bounds x="228" y="303" width="80" height="48" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="ScriptTask_4" >
         <dc:Bounds x="46" y="191" width="80" height="48" />
@@ -107,10 +107,10 @@ de.pubflow.server.services.ocn.PluginAllocator.toCSV(data);</script>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="ScriptTask_2-ScriptTask_3" >
         <di:waypoint x="427" y="349" />
-        <di:waypoint x="249" y="346" />
+        <di:waypoint x="268" y="327" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="ScriptTask_3-ScriptTask_4" >
-        <di:waypoint x="249" y="346" />
+        <di:waypoint x="268" y="327" />
         <di:waypoint x="86" y="215" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
