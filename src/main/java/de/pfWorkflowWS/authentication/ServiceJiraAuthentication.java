@@ -3,17 +3,29 @@ package de.pfWorkflowWS.authentication;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.security.KeyFactory;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.security.Security;
+import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.http.HttpException;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.util.io.pem.PemObject;
+import org.bouncycastle.util.io.pem.PemReader;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.oauth.common.signature.RSAKeySecret;
@@ -37,43 +49,34 @@ public class ServiceJiraAuthentication {
 	private final String SERVER_URL_OAUTH_REQUEST = SERVER_URL + SERVLET_URL + "/oauth/request-token";
 	private final String SERVER_URL_RESOURCE = SERVER_URL + "/rest/api/latest/issue/PUB-1";
 	private final String CONSUMER_KEY = "Alex";
-	private String CONSUMER_SECRET;
-	private final String PUBLIC_KEY = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCSoZJX3ueg0I3h4uEtRq6F8mo9oOJMGUNlLY+3KJ0Sm3zkbzKjupHX7ORmcPvnkt3S7gxW4OfwEGTiSlpEJoQnP80hcHp9oaV3mWo4m1ou8QM9nsN4CcGHa3fbgy5pVkou3OBXs3BB3EiHkz/Z0HyJynuyzz0RccR6oWGrNul4kQIDAQAB";
+	private PrivateKey CONSUMER_SECRET;
+	private PublicKey PUBLIC_KEY;
 	private final String SIGNATURE_METHOD = RSA_SHA1SignatureMethod.SIGNATURE_NAME;
 
 	private ProtectedResourceDetails resource;
 	
 	public static void main(String[] args) throws HttpException, IOException {
 		ServiceJiraAuthentication auth = new ServiceJiraAuthentication();
-
+		
 		try {
-			String key = new String(Files.readAllBytes(Paths.get("id_rsa")));
-			key = key.replaceAll("-----BEGIN RSA PRIVATE KEY-----", "");
-			key = key.replaceAll("-----END RSA PRIVATE KEY-----", "");
-			auth.setPrivateKey(key);
-		} catch (Exception e) {
+			auth.connectWithPubflow();
+		} catch (OAuthRequestFailedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchAlgorithmException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchProviderException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		auth.connectWithPubflow();
 
-	}
-
-	public String getPrivateKey(String filename) throws Exception {
-		File f = new File(filename);
-		FileInputStream fis = new FileInputStream(f);
-		DataInputStream dis = new DataInputStream(fis);
-		byte[] keyBytes = new byte[(int) f.length()];
-		dis.readFully(keyBytes);
-		dis.close();
-
-		PKCS8EncodedKeySpec spec = new PKCS8EncodedKeySpec(keyBytes);
-		KeyFactory kf = KeyFactory.getInstance("RSA");
-		return kf.generatePrivate(spec).toString();
 	}
 	
 	@Bean
-	public void connectWithPubflow() throws OAuthRequestFailedException, IOException {
+	public void connectWithPubflow() throws OAuthRequestFailedException, IOException, NoSuchAlgorithmException, NoSuchProviderException {
+		this.readKeyPair("");
+		
 		final CoreOAuthConsumerSupport localConsumerSupport = new CoreOAuthConsumerSupport();
 		localConsumerSupport.setStreamHandlerFactory(new DefaultOAuthURLStreamHandlerFactory());
 
@@ -120,14 +123,18 @@ public class ServiceJiraAuthentication {
 		OAuthSecurityContextHolder.setContext(securityContext);
 	}
 
-	private void setPrivateKey(String key) {
-		this.CONSUMER_SECRET = key;
+	private void setPrivateKey(PrivateKey priavteKey) {
+		this.CONSUMER_SECRET = priavteKey;
 	}
 
-	public String getPrivateKey() {
+	private PrivateKey getPrivateKey() {
 		return this.CONSUMER_SECRET;
 	}
 
+	private void setPublicKey(PublicKey publicKey) {
+		this.PUBLIC_KEY = publicKey;
+	}
+	
 	private void setResource(ProtectedResourceDetails resource) {
 		this.resource = resource;
 	}
@@ -135,6 +142,41 @@ public class ServiceJiraAuthentication {
 	@Bean
 	public ProtectedResourceDetails getResource() {
 		return this.resource;
+	}
+	
+	public void readKeyPair(String path) throws NoSuchAlgorithmException, NoSuchProviderException, FileNotFoundException, IOException {
+		Security.addProvider(new BouncyCastleProvider());
+
+		KeyFactory factory = KeyFactory.getInstance("RSA", "BC");
+		try {
+			this.setPrivateKey(generatePrivateKey(factory, path + "id_rsa"));
+			this.setPublicKey(generatePublicKey(factory, path + "id_rsa.pub"));
+		} catch (InvalidKeySpecException e) {
+			e.printStackTrace();
+		}
+	}
+ 
+	private PrivateKey generatePrivateKey(KeyFactory factory, String filename) throws InvalidKeySpecException, FileNotFoundException, IOException {
+		PemObject pemFile = readPem(filename);
+		byte[] content = pemFile.getContent();
+		PKCS8EncodedKeySpec privKeySpec = new PKCS8EncodedKeySpec(content);
+		return factory.generatePrivate(privKeySpec);
+	}
+	
+	private PublicKey generatePublicKey(KeyFactory factory, String filename) throws InvalidKeySpecException, FileNotFoundException, IOException {
+		PemObject pemFile = readPem(filename);
+		byte[] content = pemFile.getContent();
+		X509EncodedKeySpec pubKeySpec = new X509EncodedKeySpec(content);
+		return factory.generatePublic(pubKeySpec);
+	}
+	
+	private PemObject readPem(String filename) throws IOException {
+		PemReader pemReader = new PemReader(new InputStreamReader(new FileInputStream(filename)));
+		try {
+			return pemReader.readPemObject();
+		} finally {
+			pemReader.close();
+		}
 	}
 
 }
