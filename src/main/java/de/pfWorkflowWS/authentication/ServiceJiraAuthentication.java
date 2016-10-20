@@ -144,7 +144,7 @@ public class ServiceJiraAuthentication {
 		return this.resource;
 	}
 	
-	public void readKeyPair(String path) throws NoSuchAlgorithmException, NoSuchProviderException, FileNotFoundException, IOException {
+	private void readKeyPair(String path) throws NoSuchAlgorithmException, NoSuchProviderException, FileNotFoundException, IOException {
 		Security.addProvider(new BouncyCastleProvider());
 
 		KeyFactory factory = KeyFactory.getInstance("RSA", "BC");
