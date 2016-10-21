@@ -16,9 +16,12 @@
 package de.pfWorkflowWS.restConnection.resourceController;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -26,13 +29,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import de.pfWorkflowWS.authentication.PubflowJiraRestTemplate;
 import de.pfWorkflowWS.restConnection.restMessages.WorkflowReceiveMessage;
 import de.pfWorkflowWS.workflow.jbpm.WorkflowJBPMThread;
 import de.pfWorkflowWS.workflow.jbpm.availableWorkflows.CVOOJBPMWorkflow;
 import de.pfWorkflowWS.workflow.jbpm.availableWorkflows.EPrintsJBPMWorkflow;
 import de.pfWorkflowWS.workflow.jbpm.availableWorkflows.JBPMWorkflow;
 import de.pfWorkflowWS.workflow.jbpm.availableWorkflows.OCNJBPMWorkflow;
-import de.pfWorkflowWS.workflow.jbpm.availableWorkflows.TestFlowJBPMWorkflow;
 
 /**
  * Accepts the incoming request for new Workflow executions. The incoming
@@ -46,6 +49,9 @@ import de.pfWorkflowWS.workflow.jbpm.availableWorkflows.TestFlowJBPMWorkflow;
 @RequestMapping("/workflow")
 public class WorkflowServiceController {
 
+	@Autowired
+	private PubflowJiraRestTemplate oAuthRestTemplate;
+	
 	@RequestMapping(value = "/OCNWorkflow", method = RequestMethod.POST)
 	public ResponseEntity<String> executeOCNWorkflow(@RequestBody WorkflowReceiveMessage msg) {
 
@@ -76,22 +82,16 @@ public class WorkflowServiceController {
 
 	}
 
-	@RequestMapping(value = "/TestWorkflow", method = RequestMethod.POST)
-	public ResponseEntity<String> executeTestWorkflow(@RequestBody WorkflowReceiveMessage msg) {
-
+	@RequestMapping(value = "/TestWorkflow", method = RequestMethod.GET)
+	public void executeTestWorkflow() throws URISyntaxException {
 		/*
 		 * Test
 		 */
 		// WorkflowReceiveMessage msg = new WorkflowReceiveMessage();
 		// msg.setId("testId");
 		// msg.setCallbackAddress("http://www.example.de");
+		System.out.println(this.oAuthRestTemplate.getForObject(new URI("http://riemann:2990/jira/rest/api/latest/issue/PUB-1"), String.class));
 		
-		System.out.println(msg);
-		System.out.println("id: " + msg.getId());
-		System.out.println("cB: " + msg.getCallbackAddress());
-		System.out.println("par: " + msg.getWorkflowParameters());
-		System.out.println("valid?: " + msg.isValid());
-		return handleJBPMWorkflow(TestFlowJBPMWorkflow.getInstance(), msg);
 	}
 
 	/*

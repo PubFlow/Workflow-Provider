@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.client.RestTemplate;
 
+import de.pfWorkflowWS.authentication.PubflowJiraRestTemplate;
 import de.pfWorkflowWS.restConnection.restMessages.ResponseMessage;
 import de.pfWorkflowWS.restConnection.restMessages.WorkflowReceiveMessage;
 import de.pfWorkflowWS.workflow.WorkflowEntity;
@@ -158,7 +159,7 @@ public abstract class JBPMWorkflow {
 	public void handleError(WorkflowEntity entity) {
 
 		ResponseMessage answer = new ResponseMessage();
-		RestTemplate restTemplate = new RestTemplate();
+		PubflowJiraRestTemplate restTemplate = new PubflowJiraRestTemplate();
 		WorkflowReceiveMessage msg = entity.getInitMsg();
 		String issueKey = msg.getId();
 		// Unfortunately this is highly coupled to the Jira Workflow

@@ -1,15 +1,9 @@
 package de.pfWorkflowWS.authentication;
 
-import java.io.DataInputStream;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
@@ -19,10 +13,9 @@ import java.security.Security;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
-import java.util.HashMap;
-import java.util.Map;
 
-import org.apache.http.HttpException;
+import javax.annotation.PostConstruct;
+
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.util.io.pem.PemObject;
 import org.bouncycastle.util.io.pem.PemReader;
@@ -33,11 +26,8 @@ import org.springframework.security.oauth.common.signature.RSA_SHA1SignatureMeth
 import org.springframework.security.oauth.consumer.BaseProtectedResourceDetails;
 import org.springframework.security.oauth.consumer.OAuthConsumerToken;
 import org.springframework.security.oauth.consumer.OAuthRequestFailedException;
-import org.springframework.security.oauth.consumer.OAuthSecurityContextHolder;
-import org.springframework.security.oauth.consumer.OAuthSecurityContextImpl;
 import org.springframework.security.oauth.consumer.ProtectedResourceDetails;
 import org.springframework.security.oauth.consumer.client.CoreOAuthConsumerSupport;
-import org.springframework.security.oauth.consumer.client.OAuthRestTemplate;
 import org.springframework.security.oauth.consumer.net.DefaultOAuthURLStreamHandlerFactory;
 
 @Configuration
@@ -47,80 +37,56 @@ public class ServiceJiraAuthentication {
 	private final String SERVLET_URL = "/plugins/servlet";
 	private final String SERVER_URL_OAUTH_AUTHZ = SERVER_URL + SERVLET_URL + "/oauth/authorize?oauth_token=%s";
 	private final String SERVER_URL_OAUTH_REQUEST = SERVER_URL + SERVLET_URL + "/oauth/request-token";
-	private final String SERVER_URL_RESOURCE = SERVER_URL + "/rest/api/latest/issue/PUB-1";
 	private final String CONSUMER_KEY = "Alex";
 	private PrivateKey CONSUMER_SECRET;
 	private PublicKey PUBLIC_KEY;
 	private final String SIGNATURE_METHOD = RSA_SHA1SignatureMethod.SIGNATURE_NAME;
+	private OAuthConsumerToken requestToken;
 
+	
 	private ProtectedResourceDetails resource;
 	
-	public static void main(String[] args) throws HttpException, IOException {
-		ServiceJiraAuthentication auth = new ServiceJiraAuthentication();
-		
-		try {
-			auth.connectWithPubflow();
-		} catch (OAuthRequestFailedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (NoSuchAlgorithmException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (NoSuchProviderException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-	}
-	
-	@Bean
-	public void connectWithPubflow() throws OAuthRequestFailedException, IOException, NoSuchAlgorithmException, NoSuchProviderException {
+	@PostConstruct
+	public void retrieveRequestToken() throws OAuthRequestFailedException, IOException, NoSuchAlgorithmException, NoSuchProviderException {
+		// Read the private and public key
 		this.readKeyPair("");
 		
+		// create default Consumer
 		final CoreOAuthConsumerSupport localConsumerSupport = new CoreOAuthConsumerSupport();
 		localConsumerSupport.setStreamHandlerFactory(new DefaultOAuthURLStreamHandlerFactory());
 
+		// set the resource to connect
 		this.setResource(createResource());
-
-		final OAuthConsumerToken requestToken = localConsumerSupport.getUnauthorizedRequestToken(this.getResource(),
+		
+		// retrieve request token
+		this.requestToken = localConsumerSupport.getUnauthorizedRequestToken(this.getResource(),
 				null);
-
-		this.saveAccessToken(requestToken);
-
-		OAuthRestTemplate restTemplate = new OAuthRestTemplate(this.getResource());
-		try {
-			restTemplate.getForObject(new URI(SERVER_URL_RESOURCE), String.class);
-		} catch (URISyntaxException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
 
-	private ProtectedResourceDetails createResource() {
+	@Bean
+	public ProtectedResourceDetails createResource() {
 		BaseProtectedResourceDetails resource = new BaseProtectedResourceDetails();
 		resource.setId("pubflow");
 		resource.setConsumerKey(this.CONSUMER_KEY);
-		resource.setSharedSecret(new RSAKeySecret(this.getPrivateKey(), this.PUBLIC_KEY));
+		resource.setSharedSecret(new RSAKeySecret(this.getPrivateKey(), this.getPublicKey()));
 		resource.setSignatureMethod(SIGNATURE_METHOD);
 		resource.setUse10a(true);
 		resource.setRequestTokenURL(SERVER_URL_OAUTH_REQUEST);
 		resource.setUserAuthorizationURL(SERVER_URL_OAUTH_AUTHZ);
+		resource.setAcceptsAuthorizationHeader(true);
 
 		return resource;
 	}
 
-	public void saveAccessToken(OAuthConsumerToken requestToken) throws OAuthRequestFailedException, IOException {
-		final OAuthConsumerToken token = new OAuthConsumerToken();
+	@Bean
+	public OAuthConsumerToken retrieveAccessToken() {
+		final OAuthConsumerToken accessToken = new OAuthConsumerToken();
 
-		token.setValue("");
-		token.setSecret(requestToken.getSecret());
-		token.setAccessToken(true);
-
-		final OAuthSecurityContextImpl securityContext = new OAuthSecurityContextImpl();
-		final Map<String, OAuthConsumerToken> accessToken = new HashMap<String, OAuthConsumerToken>();
-		accessToken.put("pubflow", token);
-		securityContext.setAccessTokens(accessToken);
-		OAuthSecurityContextHolder.setContext(securityContext);
+		accessToken.setValue("");
+		accessToken.setSecret(this.getRequestToken().getSecret());
+		accessToken.setAccessToken(true);
+		
+		return accessToken;
 	}
 
 	private void setPrivateKey(PrivateKey priavteKey) {
@@ -135,12 +101,15 @@ public class ServiceJiraAuthentication {
 		this.PUBLIC_KEY = publicKey;
 	}
 	
+	private PublicKey getPublicKey() {
+		return this.PUBLIC_KEY;
+	}
+	
 	private void setResource(ProtectedResourceDetails resource) {
 		this.resource = resource;
 	}
 	
-	@Bean
-	public ProtectedResourceDetails getResource() {
+	private ProtectedResourceDetails getResource() {
 		return this.resource;
 	}
 	
@@ -177,6 +146,10 @@ public class ServiceJiraAuthentication {
 		} finally {
 			pemReader.close();
 		}
+	}
+	
+	private OAuthConsumerToken getRequestToken() {
+		return this.requestToken;
 	}
 
 }
