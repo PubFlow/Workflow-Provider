@@ -97,7 +97,7 @@ public class WorkflowServiceController {
 	/*
 	 * Often JBPM Workflows share the same code. This class validates the
 	 * message, initializes the JBPM Workflow with its Knowledgebase and starts
-	 * a new Thread to execute the Workflow. Responses are generated
+	 * a new Thread to execute the Workflow. Responses are generated.
 	 * representing the success. Does not wait for the execution to finish.
 	 */
 	private ResponseEntity<String> handleJBPMWorkflow(JBPMWorkflow offeredWorkflow, WorkflowReceiveMessage msg) {
