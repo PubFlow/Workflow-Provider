@@ -19,7 +19,6 @@ import javax.annotation.PostConstruct;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.util.io.pem.PemObject;
 import org.bouncycastle.util.io.pem.PemReader;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.oauth.common.signature.RSAKeySecret;
 import org.springframework.security.oauth.common.signature.RSA_SHA1SignatureMethod;
@@ -33,7 +32,7 @@ import org.springframework.security.oauth.consumer.net.DefaultOAuthURLStreamHand
 @Configuration
 public class ServiceJiraAuthentication {
 
-	private final String SERVER_URL = "http://riemann:2990/jira";
+	private final String SERVER_URL = "http://localhost:2990/jira";
 	private final String SERVLET_URL = "/plugins/servlet";
 	private final String SERVER_URL_OAUTH_AUTHZ = SERVER_URL + SERVLET_URL + "/oauth/authorize?oauth_token=%s";
 	private final String SERVER_URL_OAUTH_REQUEST = SERVER_URL + SERVLET_URL + "/oauth/request-token";
@@ -42,9 +41,17 @@ public class ServiceJiraAuthentication {
 	private PublicKey PUBLIC_KEY;
 	private final String SIGNATURE_METHOD = RSA_SHA1SignatureMethod.SIGNATURE_NAME;
 	private OAuthConsumerToken requestToken;
+	private final OAuthConsumerToken accessToken = new OAuthConsumerToken();
 
 	
 	private ProtectedResourceDetails resource;
+	
+	public ServiceJiraAuthentication authenticate() {
+//		this.createResource();
+//		this.retrieveAccessToken();
+		
+		return new ServiceJiraAuthentication();
+	}
 	
 	@PostConstruct
 	public void retrieveRequestToken() throws OAuthRequestFailedException, IOException, NoSuchAlgorithmException, NoSuchProviderException {
@@ -61,10 +68,12 @@ public class ServiceJiraAuthentication {
 		// retrieve request token
 		this.requestToken = localConsumerSupport.getUnauthorizedRequestToken(this.getResource(),
 				null);
+		
+		this.retrieveAccessToken();
 	}
-
-	@Bean
-	public ProtectedResourceDetails createResource() {
+	
+//	@Bean
+	private ProtectedResourceDetails createResource() {
 		BaseProtectedResourceDetails resource = new BaseProtectedResourceDetails();
 		resource.setId("pubflow");
 		resource.setConsumerKey(this.CONSUMER_KEY);
@@ -78,15 +87,14 @@ public class ServiceJiraAuthentication {
 		return resource;
 	}
 
-	@Bean
-	public OAuthConsumerToken retrieveAccessToken() {
-		final OAuthConsumerToken accessToken = new OAuthConsumerToken();
+//	@Bean
+	private void retrieveAccessToken() {
 
-		accessToken.setValue("");
-		accessToken.setSecret(this.getRequestToken().getSecret());
-		accessToken.setAccessToken(true);
+		this.accessToken.setValue("");
+		this.accessToken.setSecret(this.getRequestToken().getSecret());
+		this.accessToken.setAccessToken(true);
 		
-		return accessToken;
+//		return accessToken;
 	}
 
 	private void setPrivateKey(PrivateKey priavteKey) {
@@ -109,7 +117,7 @@ public class ServiceJiraAuthentication {
 		this.resource = resource;
 	}
 	
-	private ProtectedResourceDetails getResource() {
+	protected ProtectedResourceDetails getResource() {
 		return this.resource;
 	}
 	
@@ -150,6 +158,10 @@ public class ServiceJiraAuthentication {
 	
 	private OAuthConsumerToken getRequestToken() {
 		return this.requestToken;
+	}
+	
+	protected OAuthConsumerToken getAccessToken() {
+		return this.accessToken;
 	}
 
 }
