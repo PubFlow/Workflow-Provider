@@ -5,5 +5,7 @@
 *target/
 build/
 bin/
-.project/
+.project
 .gradle/
+.classpath
+
