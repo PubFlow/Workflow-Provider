@@ -60,7 +60,7 @@ public abstract class JBPMWorkflow {
 
 	/**
 	 * Loads the Workflow from a predefined file and creates a
-	 * {@link KnowledgeBase}
+	 * {@link KnowledgeBase}.
 	 * 
 	 * @throws IOException
 	 */
