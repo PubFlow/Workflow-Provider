@@ -13,7 +13,6 @@ import org.drools.io.ResourceFactory;
 import org.drools.runtime.StatefulKnowledgeSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.client.RestTemplate;
 
 import de.pfWorkflowWS.authentication.PubflowJiraRestTemplate;
 import de.pfWorkflowWS.restConnection.restMessages.ResponseMessage;
@@ -50,7 +49,13 @@ public abstract class JBPMWorkflow {
 		this.workflowName = workflowName;
 		this.fileName = fileName;
 	}
-
+/**
+ * Defines how the results of the workflow, saved in the {@link WorkflowEntity}, may be handled.
+ * Examples may be: sending the results to the requesting client or invoking an other service. 
+ * May be void, especially if the results are handled inside the jbpm Workflow.
+ * 
+ * param entity Containing information about one execution of a Workflow
+ */
 	abstract public void handleResult(WorkflowEntity entity);
 
 	/**

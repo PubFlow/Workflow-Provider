@@ -20,10 +20,8 @@ import org.springframework.web.client.RestClientException;
 public class PubflowJiraRestTemplate {
 
 	@Autowired
-	private ProtectedResourceDetails resource;
-	
-	@Autowired
-	private OAuthConsumerToken accessToken;
+	private ServiceJiraAuthentication jiraAuthentication;
+
 	
 	private OAuthRestTemplate restTemplate;
 	
@@ -31,7 +29,7 @@ public class PubflowJiraRestTemplate {
 	
 	private void setSecurityConext() {
 		final Map<String, OAuthConsumerToken> accessTokens = new HashMap<String, OAuthConsumerToken>();
-		accessTokens.put(this.getResource().getId(), this.getAccessToken());
+		accessTokens.put(this.jiraAuthentication.getResource().getId(), this.jiraAuthentication.getAccessToken());
 		this.getSecurityContext().setAccessTokens(accessTokens);
 
 		OAuthSecurityContextHolder.setContext(this.getSecurityContext());
@@ -41,21 +39,13 @@ public class PubflowJiraRestTemplate {
 		return this.securityContext;
 	}
 	
-	private ProtectedResourceDetails getResource() {
-		return this.resource;
-	}
-	
-	private OAuthConsumerToken getAccessToken() {
-		return this.accessToken;
-	}
-	
 	private void createRestTemplate(ProtectedResourceDetails resource) {
 		this.restTemplate = new OAuthRestTemplate(resource);
 	}
 	
 	@PostConstruct
 	private void setConfig() {		
-		this.createRestTemplate(this.getResource());
+		this.createRestTemplate(this.jiraAuthentication.getResource());
 	}
 	
 	public PubflowJiraRestTemplate createPubflowJiraRestTemplate() {
