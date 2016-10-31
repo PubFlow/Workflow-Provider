@@ -73,7 +73,7 @@ public abstract class JBPMWorkflow {
 	}
 
 	/**
-	 * Loads a process (processType BPMN2.0!) from the given location in a new
+	 * Loads a process (processType BPMN2.0!) from the given location in a new.
 	 * knowledgeBase
 	 */
 	private void createKnowledgeBase() {
