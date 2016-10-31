@@ -93,7 +93,7 @@ public abstract class JBPMWorkflow {
 	}
 
 	/**
-	 * Creates a new {@link StatefulKnowledgeSession} and executes it
+	 * Creates a new {@link StatefulKnowledgeSession} and executes it.
 	 * 
 	 * @param workflowEntity
 	 * @throws IOException,
