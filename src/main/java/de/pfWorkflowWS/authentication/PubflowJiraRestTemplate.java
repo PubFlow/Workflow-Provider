@@ -21,7 +21,6 @@ public class PubflowJiraRestTemplate {
 
 	@Autowired
 	private ServiceJiraAuthentication jiraAuthentication;
-
 	
 	private OAuthRestTemplate restTemplate;
 	
