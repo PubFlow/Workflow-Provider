@@ -4,8 +4,6 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.annotation.PostConstruct;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth.consumer.OAuthConsumerToken;
@@ -24,10 +22,20 @@ public class PubflowJiraRestTemplate {
 	
 	private OAuthRestTemplate restTemplate;
 	
-	private final OAuthSecurityContextImpl securityContext = new OAuthSecurityContextImpl();;
+	private final OAuthSecurityContextImpl securityContext = new OAuthSecurityContextImpl();
+	
+	public PubflowJiraRestTemplate() {
+		
+	}
 	
 	private void setSecurityConext() {
 		final Map<String, OAuthConsumerToken> accessTokens = new HashMap<String, OAuthConsumerToken>();
+		
+		if(restTemplate == null) {
+			this.jiraAuthentication.authenticate();
+			this.setConfig();
+		}
+		
 		accessTokens.put(this.jiraAuthentication.getResource().getId(), this.jiraAuthentication.getAccessToken());
 		this.getSecurityContext().setAccessTokens(accessTokens);
 
@@ -42,13 +50,8 @@ public class PubflowJiraRestTemplate {
 		this.restTemplate = new OAuthRestTemplate(resource);
 	}
 	
-	@PostConstruct
 	private void setConfig() {		
 		this.createRestTemplate(this.jiraAuthentication.getResource());
-	}
-	
-	public PubflowJiraRestTemplate createPubflowJiraRestTemplate() {
-		return new PubflowJiraRestTemplate();
 	}
 	
 	public <T> ResponseEntity<T> postForEntity(String url, Object request, Class<T> responseType, Object... uriVariables)

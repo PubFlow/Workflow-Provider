@@ -14,8 +14,6 @@ import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 
-import javax.annotation.PostConstruct;
-
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.util.io.pem.PemObject;
 import org.bouncycastle.util.io.pem.PemReader;
@@ -58,15 +56,35 @@ public class ServiceJiraAuthentication {
 
 	private ProtectedResourceDetails resource;
 
-	public ServiceJiraAuthentication authenticate() {
+	public ServiceJiraAuthentication createConfiguration() {
 		return new ServiceJiraAuthentication();
 	}
 
-	@PostConstruct
+	public void authenticate() {
+		// Read the private and public key
+		
+			try {
+				this.readKeyPair("");
+				this.retrieveRequestToken();
+				this.retrieveAccessToken();
+			} catch (NoSuchAlgorithmException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (NoSuchProviderException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		
+	}
+
 	public void retrieveRequestToken()
 			throws OAuthRequestFailedException, IOException, NoSuchAlgorithmException, NoSuchProviderException {
-		// Read the private and public key
-		this.readKeyPair("");
 		// create default Consumer
 		final CoreOAuthConsumerSupport localConsumerSupport = new CoreOAuthConsumerSupport();
 		localConsumerSupport.setStreamHandlerFactory(new DefaultOAuthURLStreamHandlerFactory());
@@ -76,8 +94,6 @@ public class ServiceJiraAuthentication {
 
 		// retrieve request token
 		this.requestToken = localConsumerSupport.getUnauthorizedRequestToken(this.getResource(), null);
-
-		this.retrieveAccessToken();
 	}
 
 	private ProtectedResourceDetails createResource() {
