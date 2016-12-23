@@ -24,16 +24,12 @@ public class PubflowJiraRestTemplate {
 	
 	private final OAuthSecurityContextImpl securityContext = new OAuthSecurityContextImpl();
 	
-	public PubflowJiraRestTemplate() {
-		
-	}
-	
 	private void setSecurityConext() {
 		final Map<String, OAuthConsumerToken> accessTokens = new HashMap<String, OAuthConsumerToken>();
 		
 		if(restTemplate == null) {
-			this.jiraAuthentication.authenticate();
-			this.setConfig();
+			this.getJiraAuthentication().authenticate();
+			this.createRestTemplate(this.getJiraAuthentication().getResource());
 		}
 		
 		accessTokens.put(this.jiraAuthentication.getResource().getId(), this.jiraAuthentication.getAccessToken());
@@ -50,10 +46,6 @@ public class PubflowJiraRestTemplate {
 		this.restTemplate = new OAuthRestTemplate(resource);
 	}
 	
-	private void setConfig() {		
-		this.createRestTemplate(this.jiraAuthentication.getResource());
-	}
-	
 	public <T> ResponseEntity<T> postForEntity(String url, Object request, Class<T> responseType, Object... uriVariables)
 			throws RestClientException {
 		this.setSecurityConext();
@@ -67,5 +59,9 @@ public class PubflowJiraRestTemplate {
 	
 	private OAuthRestTemplate getRestTemplate() {
 		return this.restTemplate;
+	}
+	
+	private ServiceJiraAuthentication getJiraAuthentication() {
+		return this.jiraAuthentication;
 	}
 }
